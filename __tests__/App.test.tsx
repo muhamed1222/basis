@@ -12,6 +12,8 @@ describe('App', () => {
         <App />
       </MemoryRouter>
     );
-    expect(screen.getByText(/Home \(Landing Page\)/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/умный бенто‑конструктор/i)
+    ).toBeInTheDocument();
   });
 });
