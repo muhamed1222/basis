@@ -1,4 +1,6 @@
 import React from 'react';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Routes, Route, Link, Outlet } from 'react-router-dom';
 import { Header } from './components/Header';
 
@@ -34,6 +36,7 @@ const MainLayout: React.FC = () => {
         <main className="flex-1 flex flex-col">
           <Outlet /> {/* Child routes will render here */}
         </main>
+        <ToastContainer position="bottom-right" autoClose={3000} />
       </div>
     </div>
   );

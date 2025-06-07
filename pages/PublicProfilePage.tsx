@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ProfileSidebar } from '../components/ProfileSidebar';
 import { ProjectShowcaseGrid } from '../components/ProjectShowcaseGrid';
 import {
@@ -12,6 +12,9 @@ import {
   WindowFilesIcon,
 } from '../components/icons/IconComponents';
 import type { ShareActionItem } from '../types';
+import { ReactionBar } from '../components/ReactionBar';
+import { Comments } from '../components/Comments';
+import { useAnalytics } from '../hooks/useAnalytics';
 
 // This component now represents Section 5: Public Page
 
@@ -110,11 +113,19 @@ const BottomRightShareBar: React.FC = () => {
 };
 
 const PublicProfilePage: React.FC = () => {
+  const { view } = useAnalytics();
+  useEffect(() => {
+    view();
+  }, [view]);
   return (
     // main-content-area class gives the white bg and padding
     <div className="main-content-area relative flex flex-col md:flex-row gap-[80px]">
       <ProfileSidebar />
-      <ProjectShowcaseGrid />
+      <div className="flex-1">
+        <ProjectShowcaseGrid />
+        <ReactionBar />
+        <Comments />
+      </div>
       <BottomLeftSocialBar />
       <BottomRightShareBar />
     </div>
