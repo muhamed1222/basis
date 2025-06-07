@@ -2,13 +2,9 @@ import React, { useState, useEffect } from 'react';
 import StandardPageLayout from '../layouts/StandardPageLayout';
 import { Button } from '../ui/Button';
 import { RichTextEditor } from '../components/RichTextEditor';
+import { SlugEditor } from '../components/SlugEditor';
+import { checkSlugUnique } from '../services/slugService';
 
-const takenSlugs = ['admin', 'test', 'profile'];
-
-const checkSlugAvailability = async (slug: string) => {
-  await new Promise((res) => setTimeout(res, 300));
-  return !takenSlugs.includes(slug.toLowerCase());
-};
 
 const PersonalizationPage: React.FC = () => {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
@@ -29,15 +25,11 @@ const PersonalizationPage: React.FC = () => {
       return;
     }
     const id = setTimeout(() => {
-      checkSlugAvailability(slug).then(setSlugValid);
+      checkSlugUnique(slug).then((r) => setSlugValid(r.unique));
     }, 400);
     return () => clearTimeout(id);
   }, [slug]);
 
-  const copySlug = () => {
-    const url = `${window.location.origin}/u/${slug}`;
-    navigator.clipboard.writeText(url);
-  };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -100,21 +92,12 @@ const PersonalizationPage: React.FC = () => {
           </div>
           <div>
             <label className="block mb-1 font-medium">Адрес профиля</label>
-            <div className="flex items-center gap-2">
-              <input
-                className="flex-1 p-2 border rounded"
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-              />
-              {slug && slugValid !== null && (
-                <span className={slugValid ? 'text-green-600' : 'text-red-600'}>
-                  {slugValid ? 'Свободен' : 'Занят'}
-                </span>
-              )}
-              <Button onClick={copySlug} className="px-2 py-1">
-                Копировать
-              </Button>
-            </div>
+            <SlugEditor
+              value={slug}
+              onChange={setSlug}
+              valid={slugValid}
+              base={`${window.location.origin}/u/`}
+            />
           </div>
           <div className="space-y-4">
             {blocks.map((val, i) => (

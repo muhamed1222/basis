@@ -39,6 +39,7 @@
     "eslint-plugin-react": "^7.33.2",
     "jsdom": "^26.1.0",
     "prettier": "^3.2.5",
+    "rollup": "^3.29.5",
     "typescript": "~5.5.4",
     "vite": "^6.2.0",
     "vitest": "^3.2.2"

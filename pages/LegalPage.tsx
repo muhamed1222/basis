@@ -140,14 +140,15 @@ const LegalPage: React.FC = () => {
   const [search, setSearch] = useState("");
 
   // Фильтрация по поиску
-  const filteredSections = SECTIONS.filter(
-    (s) =>
-      s.title.toLowerCase().includes(search.toLowerCase()) ||
-      (SECTION_CONTENT[s.id] as any)?.props?.children
-        ?.toString()
-        ?.toLowerCase()
-        .includes(search.toLowerCase())
-  );
+  const filteredSections = SECTIONS.filter((s) => {
+    if (s.title.toLowerCase().includes(search.toLowerCase())) return true;
+    const content = SECTION_CONTENT[s.id];
+    if (React.isValidElement(content)) {
+      const text = content.props.children?.toString().toLowerCase() || '';
+      return text.includes(search.toLowerCase());
+    }
+    return false;
+  });
 
   return (
     <StandardPageLayout title="Правовые документы и политика платформы Basis">

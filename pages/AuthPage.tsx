@@ -83,9 +83,10 @@ const AuthPage: React.FC = () => {
         setStatus('success');
         setSuccessMsg('Письмо для восстановления отправлено на почту.');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Произошла ошибка. Проверьте данные и попробуйте снова.';
       setStatus('error');
-      setErrorMsg(err?.message || 'Произошла ошибка. Проверьте данные и попробуйте снова.');
+      setErrorMsg(message);
     }
   };
 

@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ProfileSidebar } from '../components/ProfileSidebar';
 import { ProjectShowcaseGrid } from '../components/ProjectShowcaseGrid';
 import { PublishProfileButton } from '../components/PublishProfileButton';
@@ -17,6 +17,7 @@ import {
   WindowFilesIcon,
 } from '../components/icons/IconComponents';
 import type { ShareActionItem } from '../types';
+import { fetchProfile } from '../services/profileService';
 
 // This component now represents Section 5: Public Page
 
@@ -121,6 +122,12 @@ const BottomRightShareBar: React.FC = () => {
 };
 
 const PublicProfilePage: React.FC = () => {
+  const [slug, setSlug] = useState('');
+
+  useEffect(() => {
+    fetchProfile().then((data) => setSlug(data.slug));
+  }, []);
+
   return (
     // main-content-area class gives the white bg and padding
     <div className="main-content-area relative flex flex-col md:flex-row gap-[80px]">

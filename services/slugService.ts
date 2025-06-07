@@ -1,12 +1,16 @@
+import { z } from 'zod';
+import { fetchJson } from './api';
+
+const checkResponse = z.object({ unique: z.boolean() });
+const registerResponse = z.object({ success: z.boolean() });
+
 export async function checkSlugUnique(slug: string): Promise<{ unique: boolean }> {
-  const used = JSON.parse(localStorage.getItem('slugs') || '[]');
-  const unique = !used.includes(slug);
-  return new Promise((resolve) => setTimeout(() => resolve({ unique }), 500));
+  return fetchJson(`/api/check-slug?slug=${encodeURIComponent(slug)}`, checkResponse);
 }
 
-export function registerSlug(slug: string): void {
-  const used = JSON.parse(localStorage.getItem('slugs') || '[]');
-  if (!used.includes(slug)) {
-    localStorage.setItem('slugs', JSON.stringify([...used, slug]));
-  }
+export async function registerSlug(slug: string): Promise<void> {
+  await fetchJson('/api/register-slug', registerResponse, {
+    method: 'POST',
+    body: { slug },
+  });
 }

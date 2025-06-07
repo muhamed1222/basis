@@ -15,6 +15,9 @@ const users: Record<string, { id: string; password: string }> = {
   test: { id: 'test', password: 'testpass' },
 };
 
+const reservedSlugs = ['admin', 'login', 'me', 'profile'];
+const usedSlugs = new Set<string>();
+
 const oauth = new OAuth2Server({
   model: {
     async getClient(clientId: string, clientSecret: string) {
@@ -92,6 +95,31 @@ app.post('/api/login', (req, res) => {
   } else {
     res.status(401).json({ error: 'Invalid credentials' });
   }
+});
+
+// Slug endpoints
+app.get('/api/check-slug', (req, res) => {
+  const slug = String(req.query.slug || '').toLowerCase();
+  if (!slug || !/^[a-z0-9-_]{3,20}$/.test(slug) || reservedSlugs.includes(slug)) {
+    return res.json({ unique: false });
+  }
+  res.json({ unique: !usedSlugs.has(slug) });
+});
+
+app.post('/api/register-slug', (req, res) => {
+  const { slug } = req.body || {};
+  if (
+    typeof slug !== 'string' ||
+    !/^[a-z0-9-_]{3,20}$/.test(slug) ||
+    reservedSlugs.includes(slug)
+  ) {
+    return res.status(400).json({ error: 'Invalid slug' });
+  }
+  if (usedSlugs.has(slug)) {
+    return res.status(409).json({ error: 'Slug taken' });
+  }
+  usedSlugs.add(slug);
+  res.status(201).json({ success: true });
 });
 
 // GraphQL setup

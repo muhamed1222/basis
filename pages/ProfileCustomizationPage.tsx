@@ -8,7 +8,7 @@ import { RichTextEditor } from '../components/RichTextEditor';
 import { ProfileLayoutSelector } from '../components/ProfileLayoutSelector';
 import { Toast } from '../components/Toast';
 import { fetchProfile, saveProfile, ProfileData } from '../services/profileService';
-import { checkSlugUnique } from '../services/slugService';
+import { checkSlugUnique, registerSlug } from '../services/slugService';
 import { Button } from '../ui/Button';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
@@ -69,7 +69,10 @@ const ProfileCustomizationPage: React.FC = () => {
     setProfile((p) => ({ ...p, blocks: p.blocks.filter((_, i) => i !== index) }));
   };
 
-  const updateBlock = (index: number, props: any) => {
+  const updateBlock = (
+    index: number,
+    props: Partial<ProfileData['blocks'][number]>,
+  ) => {
     setProfile((p) => ({
       ...p,
       blocks: p.blocks.map((b, i) => (i === index ? { ...b, ...props } : b)),
@@ -92,6 +95,7 @@ const ProfileCustomizationPage: React.FC = () => {
     setSaving(true);
     try {
       await saveProfile(profile);
+      await registerSlug(profile.slug);
       setToast('Профиль сохранён!');
     } catch {
       setToast('Ошибка сохранения');
