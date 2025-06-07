@@ -5,6 +5,7 @@ import {
   DesktopViewIcon,
   MobileViewIcon,
 } from './icons/IconComponents';
+import { Tooltip } from './Tooltip';
 
 export const Header: React.FC = () => {
   const [isDesktopViewActive, setIsDesktopViewActive] = React.useState(true);
@@ -28,46 +29,55 @@ export const Header: React.FC = () => {
 
           {/* Center: View Icons */}
           <div className="flex items-center space-x-1 bg-white rounded-[8px] p-[2px] shadow-sm">
-            <button
-              aria-label="Desktop view"
-              aria-pressed={isDesktopViewActive}
-              onClick={() => setIsDesktopViewActive(true)}
-              className={`p-[8px] rounded-[6px] transition-all duration-200 ${
-                isDesktopViewActive
-                  ? 'bg-black text-white shadow-sm'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-black'
-              }`}
-            >
-              <DesktopViewIcon className="w-[16px] h-[17px]" />
-            </button>
-            <button
-              aria-label="Mobile view"
-              aria-pressed={!isDesktopViewActive}
-              onClick={() => setIsDesktopViewActive(false)}
-              className={`p-[8px] rounded-[6px] transition-all duration-200 ${
-                !isDesktopViewActive
-                  ? 'bg-black text-white shadow-sm'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-black'
-              }`}
-            >
-              <MobileViewIcon className="w-[17px] h-[17px]" />
-            </button>
+            <Tooltip text="Десктопный режим">
+              <button
+                id="view-toggle-desktop"
+                aria-label="Desktop view"
+                aria-pressed={isDesktopViewActive}
+                onClick={() => setIsDesktopViewActive(true)}
+                className={`p-[8px] rounded-[6px] transition-all duration-200 ${
+                  isDesktopViewActive
+                    ? 'bg-black text-white shadow-sm'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-black'
+                }`}
+              >
+                <DesktopViewIcon className="w-[16px] h-[17px]" />
+              </button>
+            </Tooltip>
+            <Tooltip text="Мобильный режим">
+              <button
+                aria-label="Mobile view"
+                aria-pressed={!isDesktopViewActive}
+                onClick={() => setIsDesktopViewActive(false)}
+                className={`p-[8px] rounded-[6px] transition-all duration-200 ${
+                  !isDesktopViewActive
+                    ? 'bg-black text-white shadow-sm'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-black'
+                }`}
+              >
+                <MobileViewIcon className="w-[17px] h-[17px]" />
+              </button>
+            </Tooltip>
           </div>
 
           {/* Right: Auth Buttons */}
           <div className="bg-[#F0F0F0] rounded-[12px] p-[8px] flex items-center space-x-1 outline outline-1 outline-[rgba(255,255,255,0.08)] shadow-sm">
-            <Link
-              to="/auth?action=login"
-              className="px-[11px] py-[5px] text-sm font-semibold text-black bg-[rgba(0,0,0,0.10)] hover:bg-[rgba(0,0,0,0.15)] rounded-[8px] transition-all duration-200 leading-[20px] hover:shadow-sm"
-            >
-              Войти
-            </Link>
-            <Link
-              to="/auth?action=signup"
-              className="px-[11px] py-[5px] text-sm font-semibold text-black bg-[rgba(0,0,0,0.10)] hover:bg-[rgba(0,0,0,0.15)] rounded-[8px] transition-all duration-200 leading-[20px] hover:shadow-sm"
-            >
-              Зарегистрироваться
-            </Link>
+            <Tooltip text="Войти в аккаунт">
+              <Link
+                to="/auth?action=login"
+                className="px-[11px] py-[5px] text-sm font-semibold text-black bg-[rgba(0,0,0,0.10)] hover:bg-[rgba(0,0,0,0.15)] rounded-[8px] transition-all duration-200 leading-[20px] hover:shadow-sm"
+              >
+                Войти
+              </Link>
+            </Tooltip>
+            <Tooltip text="Создать новый аккаунт">
+              <Link
+                to="/auth?action=signup"
+                className="px-[11px] py-[5px] text-sm font-semibold text-black bg-[rgba(0,0,0,0.10)] hover:bg-[rgba(0,0,0,0.15)] rounded-[8px] transition-all duration-200 leading-[20px] hover:shadow-sm"
+              >
+                Зарегистрироваться
+              </Link>
+            </Tooltip>
           </div>
         </div>
       </div>
