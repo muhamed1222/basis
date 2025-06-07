@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import StandardPageLayout from '../layouts/StandardPageLayout';
 import { ProfileEditor } from '../components/ProfileEditor';
 import useAuth from '../hooks/useAuth';
+import { useToast } from '../components/ToastProvider';
 
 const LoadingSpinner: React.FC = () => (
   <div className="flex justify-center items-center min-h-[400px]">
@@ -33,7 +34,9 @@ const ProfileEditorPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, loading, error, isAuthenticated, refreshUser } = useAuth();
+  const { showSuccess, showError } = useToast();
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [editorKey, setEditorKey] = useState(0);
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -59,6 +62,12 @@ const ProfileEditorPage: React.FC = () => {
 
   const handleRetry = () => {
     refreshUser?.();
+  };
+
+  const handleReset = () => {
+    setEditorKey(k => k + 1);
+    setHasUnsavedChanges(false);
+    showSuccess('Изменения отменены');
   };
 
   if (loading) {
@@ -114,25 +123,32 @@ const ProfileEditorPage: React.FC = () => {
         </div>
 
         {hasUnsavedChanges && (
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-            <div className="flex">
-              <div className="flex-shrink-0">
-                <span className="text-yellow-400">⚠️</span>
-              </div>
-              <div className="ml-3">
-                <p className="text-sm text-yellow-700">
-                  У вас есть несохраненные изменения. Не забудьте сохранить данные перед выходом.
-                </p>
-              </div>
+          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-yellow-400">⚠️</span>
+              <span className="text-sm text-yellow-700">У вас есть несохраненные изменения</span>
             </div>
+            <button
+              onClick={handleReset}
+              className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300 text-sm"
+            >
+              Отменить
+            </button>
           </div>
         )}
 
         <ProfileEditor
+          key={editorKey}
           userId={user.id}
           onUnsavedChanges={setHasUnsavedChanges}
-          onSaveSuccess={() => setHasUnsavedChanges(false)}
-          onError={err => console.error('Profile editor error:', err)}
+          onSaveSuccess={() => {
+            setHasUnsavedChanges(false);
+            showSuccess('Профиль сохранён');
+          }}
+          onError={err => {
+            showError('Ошибка при сохранении');
+            console.error('Profile editor error:', err);
+          }}
         />
       </div>
     </StandardPageLayout>
