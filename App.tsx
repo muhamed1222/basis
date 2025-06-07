@@ -14,6 +14,7 @@ import AnalyticsPage from './pages/AnalyticsPage';
 import SupportPage from './pages/SupportPage';
 import AdminPage from './pages/AdminPage';
 import LegalPage from './pages/LegalPage';
+import AiDemoPage from './pages/AiDemoPage';
 
 // Main layout to include Header and consistent structure
 const MainLayout: React.FC = () => {
@@ -70,6 +71,11 @@ const StandardPageLayout: React.FC<{
             Dashboard
           </Link>
         </li>
+        <li>
+          <Link to="/ai" className="text-blue-600 hover:underline">
+            AI Помощник
+          </Link>
+        </li>
         {/* Add more links as needed for testing */}
       </ul>
     </div>
@@ -84,6 +90,7 @@ const App: React.FC = () => {
         <Route path="auth" element={<AuthPage />} />
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="editor" element={<EditorPage />} />
+        <Route path="ai" element={<AiDemoPage />} />
         <Route path="public-profile" element={<PublicProfilePage />} />{' '}
         {/* This is the existing detailed page */}
         <Route path="account" element={<AccountSettingsPage />} />
