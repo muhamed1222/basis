@@ -1,5 +1,4 @@
 import React from 'react';
-import StandardPageLayout from '../layouts/StandardPageLayout';
 
 const EditorPage: React.FC = () => {
   return (
@@ -76,26 +75,74 @@ const EditorPage: React.FC = () => {
             </div>
           </div>
           {/* Canvas */}
-          <div className="flex-1 p-4 flex items-center justify-center overflow-auto">
-            <div className="w-full max-w-3xl h-full bg-white shadow-inner border border-dashed border-gray-400 rounded-md flex items-center justify-center">
-              <p className="text-gray-500 text-lg">
-                Drag & Drop интерфейс (Канва)
-              </p>
+          <div className="flex-1 p-4 overflow-auto">
+            <div className="w-full max-w-3xl mx-auto min-h-[300px] bg-white shadow-inner border border-dashed border-gray-400 rounded-md p-4 transition-all">
+              <BlockEditor />
             </div>
           </div>
         </main>
         {/* Right Sidebar: Customization & Settings */}
         <aside className="w-full lg:w-1/4 bg-gray-100 p-4 rounded-lg shadow space-y-4 overflow-y-auto">
-          <div>
+          <div className="space-y-2">
             <h3 className="text-lg font-semibold font-pragmatica mb-2">
               Кастомизация
             </h3>
-            <ul className="space-y-1 text-sm">
-              <li>Цвета</li>
-              <li>Сетка</li>
-              <li>Темы</li>
-              <li>Шрифты</li>
-            </ul>
+            <label className="block text-sm">
+              Цвет фона блока
+              <input
+                type="color"
+                className="w-full"
+                onChange={(e) => {
+                  document.documentElement.style.setProperty(
+                    '--block-bg',
+                    e.target.value
+                  );
+                }}
+              />
+            </label>
+            <label className="block text-sm">
+              Цвет текста
+              <input
+                type="color"
+                className="w-full"
+                onChange={(e) => {
+                  document.documentElement.style.setProperty(
+                    '--block-text',
+                    e.target.value
+                  );
+                }}
+              />
+            </label>
+            <label className="block text-sm">
+              Шрифт
+              <select
+                className="w-full mt-1 border rounded p-1"
+                onChange={(e) => {
+                  document.documentElement.style.setProperty(
+                    '--block-font',
+                    e.target.value
+                  );
+                }}
+              >
+                {fonts.map((f) => (
+                  <option key={f.value} value={f.value}>
+                    {f.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              onClick={() => {
+                const current =
+                  document.documentElement.getAttribute('data-theme');
+                const next = current === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                localStorage.setItem('theme', next);
+              }}
+              className="px-3 py-1 bg-black text-white rounded mt-2"
+            >
+              Переключить тему
+            </button>
           </div>
           <div>
             <h3 className="text-lg font-semibold font-pragmatica mb-2">
