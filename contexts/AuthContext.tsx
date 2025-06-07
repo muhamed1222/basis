@@ -12,7 +12,9 @@ export interface User {
 export interface AuthContextValue {
   user?: User;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string, name?: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
+  updateUser: (user: User) => void;
   logout: () => Promise<void>;
 }
 
@@ -26,9 +28,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(u);
   };
 
-  const signup = async (email: string, password: string) => {
-    const u = await auth.signup(email, password);
+  const signup = async (email: string, password: string, name?: string) => {
+    const u = await auth.signup(email, password, name);
     setUser(u);
+  };
+
+  const resetPassword = async (email: string) => {
+    await auth.resetPassword(email);
+  };
+
+  const updateUser = (newUser: User) => {
+    setUser(newUser);
   };
 
   const logout = async () => {
@@ -37,7 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, login, signup, resetPassword, updateUser, logout }}>
       {children}
     </AuthContext.Provider>
   );
