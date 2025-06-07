@@ -12,6 +12,7 @@
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier -w .",
     "server": "ts-node server/index.ts",
+    "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
     "postinstall": "npm rebuild rollup"
   },
   "dependencies": {
@@ -49,6 +50,7 @@
     "tailwindcss": "^4.1.8",
     "typescript": "~5.5.4",
     "vite": "^6.2.0",
-    "vitest": "^3.2.2"
+    "vitest": "^3.2.2",
+    "concurrently": "^9.1.2"
   }
 }
