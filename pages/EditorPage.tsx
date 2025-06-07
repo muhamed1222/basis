@@ -3,6 +3,7 @@ import StandardPageLayout from '../layouts/StandardPageLayout';
 import { Tooltip } from '../components/Tooltip';
 import { Onboarding } from '../components/Onboarding';
 import { useToast } from '../components/ToastProvider';
+import Spinner from '../ui/Spinner';
 
 // --- Базовые типы блоков ---
 const BLOCK_TYPES = [
@@ -232,19 +233,23 @@ const EditorPage: React.FC = () => {
             <div className="flex items-center space-x-2">
               <Tooltip text="Сохранить изменения">
                 <button
-                  className="px-3 py-1.5 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
+                  className="px-3 py-1.5 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center justify-center"
                   onClick={handleSave}
                   disabled={saving}
+                  aria-busy={saving}
                 >
+                  {saving && <Spinner size="h-4 w-4" className="mr-1" />}
                   {saving ? 'Сохраняем...' : 'Сохранить'}
                 </button>
               </Tooltip>
               <Tooltip text="Опубликовать страницу">
                 <button
-                  className="px-3 py-1.5 text-xs bg-green-500 text-white rounded hover:bg-green-600"
+                  className="px-3 py-1.5 text-xs bg-green-500 text-white rounded hover:bg-green-600 flex items-center justify-center"
                   onClick={handlePublish}
                   disabled={publishing}
+                  aria-busy={publishing}
                 >
+                  {publishing && <Spinner size="h-4 w-4" className="mr-1" />}
                   {publishing ? 'Публикуем...' : 'Опубликовать'}
                 </button>
               </Tooltip>

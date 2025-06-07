@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import StandardPageLayout from '../layouts/StandardPageLayout';
 import { Link } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
 
 const AdminSectionLink: React.FC<{
   to: string;
@@ -19,8 +20,17 @@ const AdminSectionLink: React.FC<{
 );
 
 const AdminPage: React.FC = () => {
-  // This page would typically be protected by role-based access control
-  const isStaff = true; // Placeholder for actual auth check
+  const { user, refreshUser, loading } = useAuth();
+
+  useEffect(() => {
+    refreshUser();
+  }, [refreshUser]);
+
+  const isStaff = user?.role === 'staff';
+
+  if (loading) {
+    return <StandardPageLayout title="Loading" />;
+  }
 
   if (!isStaff) {
     return (

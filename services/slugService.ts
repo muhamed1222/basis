@@ -1,12 +1,18 @@
 export async function checkSlugUnique(slug: string): Promise<{ unique: boolean }> {
-  const used = JSON.parse(localStorage.getItem('slugs') || '[]');
-  const unique = !used.includes(slug);
-  return new Promise((resolve) => setTimeout(() => resolve({ unique }), 500));
+  const response = await fetch(`/api/check-slug?slug=${encodeURIComponent(slug)}`);
+  if (!response.ok) {
+    throw new Error('Failed to check slug');
+  }
+  return response.json() as Promise<{ unique: boolean }>;
 }
 
-export function registerSlug(slug: string): void {
-  const used = JSON.parse(localStorage.getItem('slugs') || '[]');
-  if (!used.includes(slug)) {
-    localStorage.setItem('slugs', JSON.stringify([...used, slug]));
+export async function registerSlug(slug: string): Promise<void> {
+  const response = await fetch('/api/register-slug', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ slug }),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to register slug');
   }
 }

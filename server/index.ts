@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import express from 'express';
 import rateLimit from 'express-rate-limit';
+import session from 'express-session';
 import { ApolloServer, gql } from 'apollo-server-express';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
@@ -8,6 +9,17 @@ import OAuth2Server from 'oauth2-server';
 
 const app = express();
 app.use(express.json());
+app.use(
+  session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+// Slug management
+const RESERVED_SLUGS = new Set(['admin', 'login', 'me', 'profile']);
+const usedSlugs = new Set<string>();
 
 // Simple in-memory OAuth model
 const users: Record<string, { id: string; password: string }> = {
@@ -69,6 +81,15 @@ app.get('/api/profile', (req, res) => {
   res.json({ id: 'user', name: 'Demo User' });
 });
 
+app.get('/api/me', (req, res) => {
+  const user = (req as any).session.user;
+  if (user) {
+    res.json(user);
+  } else {
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+});
+
 // Simple auth endpoints for local development
 app.post('/api/signup', (req, res) => {
   const { email, password } = req.body || {};
@@ -81,17 +102,48 @@ app.post('/api/signup', (req, res) => {
     return;
   }
   users[email] = { id: email, password };
-  res.status(201).json({ id: email, email, role: 'owner' });
+  const user = { id: email, email, role: 'owner' };
+  (req as any).session.user = user;
+  res.status(201).json(user);
 });
 
 app.post('/api/login', (req, res) => {
   const { email, password } = req.body || {};
   const record = users[email];
   if (record && record.password === password) {
-    res.json({ id: record.id, email, role: 'owner' });
+    const user = { id: record.id, email, role: 'owner' };
+    (req as any).session.user = user;
+    res.json(user);
   } else {
     res.status(401).json({ error: 'Invalid credentials' });
   }
+});
+
+// Slug endpoints
+app.get('/api/check-slug', (req, res) => {
+  const slug = String(req.query.slug || '').trim().toLowerCase();
+  const valid = /^[a-zA-Z0-9-_]{3,20}$/.test(slug);
+  if (!valid) {
+    res.json({ unique: false });
+    return;
+  }
+  const unique = !RESERVED_SLUGS.has(slug) && !usedSlugs.has(slug);
+  res.json({ unique });
+});
+
+app.post('/api/register-slug', (req, res) => {
+  const slug = String(req.body?.slug || '').trim().toLowerCase();
+  const valid = /^[a-zA-Z0-9-_]{3,20}$/.test(slug);
+  if (!valid) {
+    res.status(400).json({ success: false });
+    return;
+  }
+  if (RESERVED_SLUGS.has(slug) || usedSlugs.has(slug)) {
+    res.status(409).json({ success: false });
+    return;
+  }
+  usedSlugs.add(slug);
+  res.json({ success: true });
 });
 
 // GraphQL setup
