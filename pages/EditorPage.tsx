@@ -1,12 +1,4 @@
 import React from 'react';
-import { StandardPageLayout } from '../App';
-import { BlockEditor } from '../components/BlockEditor';
-
-const fonts = [
-  { label: 'Системный', value: 'inherit' },
-  { label: 'Arial', value: 'Arial, sans-serif' },
-  { label: 'Courier', value: 'Courier New, monospace' },
-];
 
 const EditorPage: React.FC = () => {
   return (

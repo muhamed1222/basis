@@ -1,5 +1,5 @@
 import React from 'react';
-import { StandardPageLayout } from '../App';
+import StandardPageLayout from '../layouts/StandardPageLayout';
 import { Link } from 'react-router-dom';
 
 const SupportPage: React.FC = () => {

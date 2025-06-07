@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StandardPageLayout } from '../App';
+import StandardPageLayout from '../layouts/StandardPageLayout';
 import { Link } from 'react-router-dom';
 import { useAsync } from '../hooks/useAsync';
 import { fetchJson } from '../services/api';
