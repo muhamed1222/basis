@@ -1,10 +1,17 @@
-import React from 'react';
-import { StandardPageLayout } from '../App';
+
 
 const EditorPage: React.FC = () => {
+  const [template, setTemplate] = useState<string | null>(null);
+
+  if (!template) {
+    return (
+      <StandardPageLayout title="Выбор шаблона">
+        <TemplateGallery onSelect={(id) => setTemplate(id)} />
+      </StandardPageLayout>
+    );
+  }
+
   return (
-    // We use StandardPageLayout to keep the header, but the actual editor might need a more custom full-height layout.
-    // For this placeholder, we'll fit it within the standard content area.
     <StandardPageLayout title="4. Editor (Редактор страницы)">
       <div className="flex flex-col lg:flex-row gap-4 h-[calc(100vh-250px)] min-h-[500px]">
         {' '}
@@ -48,15 +55,21 @@ const EditorPage: React.FC = () => {
           {/* Top Controls for Editor */}
           <div className="bg-white p-2 border-b border-gray-300 rounded-t-lg flex justify-between items-center">
             <div className="flex items-center space-x-2">
-              <button className="px-3 py-1.5 text-xs bg-blue-500 text-white rounded hover:bg-blue-600">
-                Сохранить
-              </button>
-              <button className="px-3 py-1.5 text-xs bg-green-500 text-white rounded hover:bg-green-600">
-                Опубликовать
-              </button>
-              <button className="px-3 py-1.5 text-xs bg-gray-500 text-white rounded hover:bg-gray-600">
-                Предпросмотр
-              </button>
+              <Tooltip text="Сохранить изменения">
+                <button className="px-3 py-1.5 text-xs bg-blue-500 text-white rounded hover:bg-blue-600">
+                  Сохранить
+                </button>
+              </Tooltip>
+              <Tooltip text="Опубликовать страницу">
+                <button className="px-3 py-1.5 text-xs bg-green-500 text-white rounded hover:bg-green-600">
+                  Опубликовать
+                </button>
+              </Tooltip>
+              <Tooltip text="Посмотреть как выглядит страница">
+                <button className="px-3 py-1.5 text-xs bg-gray-500 text-white rounded hover:bg-gray-600">
+                  Предпросмотр
+                </button>
+              </Tooltip>
             </div>
             <div className="flex items-center space-x-2">
               {/* Undo/Redo Placeholder */}
@@ -76,26 +89,71 @@ const EditorPage: React.FC = () => {
             </div>
           </div>
           {/* Canvas */}
-          <div className="flex-1 p-4 flex items-center justify-center overflow-auto">
-            <div className="w-full max-w-3xl h-full bg-white shadow-inner border border-dashed border-gray-400 rounded-md flex items-center justify-center">
-              <p className="text-gray-500 text-lg">
-                Drag & Drop интерфейс (Канва)
-              </p>
-            </div>
+          <div className="flex-1 p-4 overflow-auto">
           </div>
         </main>
         {/* Right Sidebar: Customization & Settings */}
         <aside className="w-full lg:w-1/4 bg-gray-100 p-4 rounded-lg shadow space-y-4 overflow-y-auto">
-          <div>
+          <div className="space-y-2">
             <h3 className="text-lg font-semibold font-pragmatica mb-2">
               Кастомизация
             </h3>
-            <ul className="space-y-1 text-sm">
-              <li>Цвета</li>
-              <li>Сетка</li>
-              <li>Темы</li>
-              <li>Шрифты</li>
-            </ul>
+            <label className="block text-sm">
+              Цвет фона блока
+              <input
+                type="color"
+                className="w-full"
+                onChange={(e) => {
+                  document.documentElement.style.setProperty(
+                    '--block-bg',
+                    e.target.value
+                  );
+                }}
+              />
+            </label>
+            <label className="block text-sm">
+              Цвет текста
+              <input
+                type="color"
+                className="w-full"
+                onChange={(e) => {
+                  document.documentElement.style.setProperty(
+                    '--block-text',
+                    e.target.value
+                  );
+                }}
+              />
+            </label>
+            <label className="block text-sm">
+              Шрифт
+              <select
+                className="w-full mt-1 border rounded p-1"
+                onChange={(e) => {
+                  document.documentElement.style.setProperty(
+                    '--block-font',
+                    e.target.value
+                  );
+                }}
+              >
+                {fonts.map((f) => (
+                  <option key={f.value} value={f.value}>
+                    {f.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              onClick={() => {
+                const current =
+                  document.documentElement.getAttribute('data-theme');
+                const next = current === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', next);
+                localStorage.setItem('theme', next);
+              }}
+              className="px-3 py-1 bg-black text-white rounded mt-2"
+            >
+              Переключить тему
+            </button>
           </div>
           <div>
             <h3 className="text-lg font-semibold font-pragmatica mb-2">
