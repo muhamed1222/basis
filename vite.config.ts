@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
       resolve: {
         alias: {
           '@': path.resolve(__dirname, '.'),
+          'zod': path.resolve(__dirname, 'node_modules/zod/dist/esm/index.js'),
         }
       },
       optimizeDeps: {
