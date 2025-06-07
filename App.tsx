@@ -14,6 +14,7 @@ import AnalyticsPage from './pages/AnalyticsPage';
 import SupportPage from './pages/SupportPage';
 import AdminPage from './pages/AdminPage';
 import LegalPage from './pages/LegalPage';
+import ProfileCustomizationPage from './pages/ProfileCustomizationPage';
 
 // Main layout to include Header and consistent structure
 const MainLayout: React.FC = () => {
@@ -70,6 +71,11 @@ const StandardPageLayout: React.FC<{
             Dashboard
           </Link>
         </li>
+        <li>
+          <Link to="/profile-customize" className="text-blue-600 hover:underline">
+            Customize Profile
+          </Link>
+        </li>
         {/* Add more links as needed for testing */}
       </ul>
     </div>
@@ -86,6 +92,7 @@ const App: React.FC = () => {
         <Route path="editor" element={<EditorPage />} />
         <Route path="public-profile" element={<PublicProfilePage />} />{' '}
         {/* This is the existing detailed page */}
+        <Route path="profile-customize" element={<ProfileCustomizationPage />} />
         <Route path="account" element={<AccountSettingsPage />} />
         <Route path="billing" element={<BillingPage />} />
         <Route path="analytics" element={<AnalyticsPage />} />
