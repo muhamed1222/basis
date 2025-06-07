@@ -10,11 +10,6 @@ const app = express();
 app.use(express.json());
 
 // Simple in-memory OAuth model
-const users: Record<string, { id: string; password: string }> = {
-  user: { id: 'user', password: 'pass' },
-  test: { id: 'test', password: 'testpass' },
-};
-
 const oauth = new OAuth2Server({
   model: {
     async getClient(clientId: string, clientSecret: string) {
@@ -27,10 +22,7 @@ const oauth = new OAuth2Server({
       return { ...token, client, user };
     },
     async getUser(username: string, password: string) {
-      const record = users[username];
-      if (record && record.password === password) {
-        return { id: record.id };
-      }
+      if (username === 'user' && password === 'pass') return { id: 'user' };
       return null;
     },
     async getAccessToken(accessToken: string) {
