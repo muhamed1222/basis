@@ -13,6 +13,7 @@ import {
 } from '../api/billing';
 import { Link } from 'react-router-dom';
 import useNotification from '../hooks/useNotification';
+import Spinner from '../ui/Spinner';
 
 const TariffCard = ({
   name,
@@ -76,9 +77,11 @@ const TariffCard = ({
       <button
         onClick={onSwitch}
         disabled={loading}
-        className={`w-full px-6 py-3 ${popular ? 'bg-green-500 hover:bg-green-600' : 'bg-indigo-600 hover:bg-indigo-700'} text-white font-semibold rounded-lg transition-colors`}
+        aria-busy={loading}
+        className={`w-full px-6 py-3 ${popular ? 'bg-green-500 hover:bg-green-600' : 'bg-indigo-600 hover:bg-indigo-700'} text-white font-semibold rounded-lg transition-colors flex items-center justify-center`}
         aria-label={`Переключиться на тариф ${name}`}
       >
+        {loading && <Spinner size="h-4 w-4" className="mr-2" />}
         {loading ? 'Переключаем...' : `Переключиться на ${name}`}
       </button>
     )}
@@ -233,11 +236,12 @@ const BillingPage: React.FC = () => {
                 {billingInfo?.paymentMethod || 'Не задан'}
               </p>
               <button
-                className="text-sm text-indigo-600 hover:underline mt-1"
+                className="text-sm text-indigo-600 hover:underline mt-1 flex items-center"
                 disabled={payMethodLoading}
                 onClick={handleUpdatePayMethod}
                 aria-busy={payMethodLoading}
               >
+                {payMethodLoading && <Spinner size="h-4 w-4" className="mr-1" />}
                 {payMethodLoading ? 'Обновляем...' : 'Изменить способ оплаты'}
               </button>
             </div>

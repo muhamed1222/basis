@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import StandardPageLayout from '../layouts/StandardPageLayout';
 import { useGenerateProfile } from '../hooks/useGenerateProfile';
 import { Button } from '../ui/Button';
+import Spinner from '../ui/Spinner';
 import type { GeneratedProfile } from '../services/ai';
 
 type GenerateInput = {
@@ -85,8 +86,10 @@ const AiDemoPage: React.FC = () => {
           <Button
             onClick={handleGenerate}
             disabled={loading || !input.goals.trim() || !input.description.trim()}
-            className="w-full"
+            aria-busy={loading}
+            className="w-full flex items-center justify-center"
           >
+            {loading && <Spinner size="h-4 w-4" className="mr-2" />}
             {loading ? 'AI генерирует…' : 'Сгенерировать'}
           </Button>
           {error && (

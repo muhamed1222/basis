@@ -12,7 +12,7 @@ const SECTIONS = [
   { id: "history", title: "Версии и история изменений" },
 ];
 
-const SECTION_CONTENT: Record<string, React.ReactNode> = {
+const SECTION_CONTENT: Record<string, React.ReactElement> = {
   terms: (
     <>
       <h2>Пользовательское соглашение (Terms of Service)</h2>
@@ -141,14 +141,6 @@ const LegalPage: React.FC = () => {
 
   // Фильтрация по поиску
   const filteredSections = SECTIONS.filter((s) => {
-    if (s.title.toLowerCase().includes(search.toLowerCase())) return true;
-    const content = SECTION_CONTENT[s.id];
-    if (React.isValidElement(content)) {
-      const text = content.props.children?.toString().toLowerCase() || '';
-      return text.includes(search.toLowerCase());
-    }
-    return false;
-  });
 
   return (
     <StandardPageLayout title="Правовые документы и политика платформы Basis">

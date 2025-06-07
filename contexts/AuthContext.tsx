@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState } from 'react';
 import * as auth from '../services/auth';
 
-export type UserRole = 'owner' | 'editor';
+export type UserRole = 'owner' | 'editor' | 'staff';
 
 export interface User {
   id: string;
@@ -14,7 +14,7 @@ export interface AuthContextValue {
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, name?: string) => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
-  updateUser: (user: User) => void;
+  updateUser: (user?: User) => void;
   logout: () => Promise<void>;
 }
 
@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await auth.resetPassword(email);
   };
 
-  const updateUser = (newUser: User) => {
+  const updateUser = (newUser?: User) => {
     setUser(newUser);
   };
 

@@ -8,8 +8,8 @@ import { RichTextEditor } from '../components/RichTextEditor';
 import { ProfileLayoutSelector } from '../components/ProfileLayoutSelector';
 import { Toast } from '../components/Toast';
 import { fetchProfile, saveProfile, ProfileData } from '../services/profileService';
-import { checkSlugUnique, registerSlug } from '../services/slugService';
 import { Button } from '../ui/Button';
+import Spinner from '../ui/Spinner';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
 const BLOCK_TYPES = [
@@ -18,7 +18,6 @@ const BLOCK_TYPES = [
   { type: 'divider', label: 'Разделитель', default: {} },
 ];
 
-const RESERVED_SLUGS = ['admin', 'login', 'me', 'profile'];
 
 const ProfileCustomizationPage: React.FC = () => {
   const [profile, setProfile] = useState<ProfileData>({
@@ -29,7 +28,7 @@ const ProfileCustomizationPage: React.FC = () => {
     color: '#2f80ed',
     blocks: [],
   });
-  const [slugValid, setSlugValid] = useState<boolean | null>(null);
+  const slugValid = useSlugValidation(profile.slug, RESERVED_SLUGS);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -42,22 +41,6 @@ const ProfileCustomizationPage: React.FC = () => {
     });
   }, []);
 
-  useEffect(() => {
-    if (!profile.slug) return setSlugValid(null);
-    if (!/^[a-zA-Z0-9-_]{3,20}$/.test(profile.slug) || RESERVED_SLUGS.includes(profile.slug)) {
-      setSlugValid(false);
-      return;
-    }
-    let cancelled = false;
-    checkSlugUnique(profile.slug)
-      .then((r) => {
-        if (!cancelled) setSlugValid(r.unique);
-      })
-      .catch(() => !cancelled && setSlugValid(false));
-    return () => {
-      cancelled = true;
-    };
-  }, [profile.slug]);
 
   const addBlock = (type: string) => {
     const blockType = BLOCK_TYPES.find((b) => b.type === type);
@@ -69,10 +52,6 @@ const ProfileCustomizationPage: React.FC = () => {
     setProfile((p) => ({ ...p, blocks: p.blocks.filter((_, i) => i !== index) }));
   };
 
-  const updateBlock = (
-    index: number,
-    props: Partial<ProfileData['blocks'][number]>,
-  ) => {
     setProfile((p) => ({
       ...p,
       blocks: p.blocks.map((b, i) => (i === index ? { ...b, ...props } : b)),
@@ -184,7 +163,13 @@ const ProfileCustomizationPage: React.FC = () => {
               onChange={(e) => setProfile((p) => ({ ...p, color: e.target.value }))}
             />
           </div>
-          <Button onClick={handleSave} disabled={saving || !slugValid} className="mt-6 px-5 py-3 w-full bg-indigo-600 text-white rounded font-bold">
+          <Button
+            onClick={handleSave}
+            disabled={saving || !slugValid}
+            aria-busy={saving}
+            className="mt-6 px-5 py-3 w-full bg-indigo-600 text-white rounded font-bold flex items-center justify-center"
+          >
+            {saving && <Spinner size="h-4 w-4" className="mr-2" />}
             {saving ? 'Сохраняем…' : 'Сохранить профиль'}
           </Button>
         </aside>

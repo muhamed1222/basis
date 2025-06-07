@@ -17,7 +17,7 @@ const StandardPageLayout: React.FC<{
           </Link>
         </li>
         <li>
-          <Link to="/public-profile" className="text-blue-600 hover:underline">
+          <Link to="/public-profile/demo" className="text-blue-600 hover:underline">
             Public Profile (Current Design)
           </Link>
         </li>
