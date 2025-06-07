@@ -69,6 +69,31 @@ app.get('/api/profile', (req, res) => {
   res.json({ id: 'user', name: 'Demo User' });
 });
 
+// Simple auth endpoints for local development
+app.post('/api/signup', (req, res) => {
+  const { email, password } = req.body || {};
+  if (!email || !password) {
+    res.status(400).json({ error: 'Email and password required' });
+    return;
+  }
+  if (users[email]) {
+    res.status(409).json({ error: 'User already exists' });
+    return;
+  }
+  users[email] = { id: email, password };
+  res.status(201).json({ id: email, email, role: 'owner' });
+});
+
+app.post('/api/login', (req, res) => {
+  const { email, password } = req.body || {};
+  const record = users[email];
+  if (record && record.password === password) {
+    res.json({ id: record.id, email, role: 'owner' });
+  } else {
+    res.status(401).json({ error: 'Invalid credentials' });
+  }
+});
+
 // GraphQL setup
 const typeDefs = gql`
   type Query {
