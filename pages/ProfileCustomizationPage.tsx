@@ -69,7 +69,10 @@ const ProfileCustomizationPage: React.FC = () => {
     setProfile((p) => ({ ...p, blocks: p.blocks.filter((_, i) => i !== index) }));
   };
 
-  const updateBlock = (index: number, props: any) => {
+  const updateBlock = (
+    index: number,
+    props: Partial<ProfileData['blocks'][number]>
+  ) => {
     setProfile((p) => ({
       ...p,
       blocks: p.blocks.map((b, i) => (i === index ? { ...b, ...props } : b)),

@@ -158,8 +158,9 @@ const BillingPage: React.FC = () => {
       showNotification('Тариф успешно переключён!', 'success');
       const b = await getBillingInfo();
       setBillingInfo(b);
-    } catch (e: any) {
-      showNotification(e?.message || 'Ошибка переключения тарифа', 'error');
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'Ошибка переключения тарифа';
+      showNotification(message, 'error');
     } finally {
       setTariffLoading(null);
     }
@@ -172,8 +173,9 @@ const BillingPage: React.FC = () => {
       showNotification('Способ оплаты обновлён', 'success');
       const b = await getBillingInfo();
       setBillingInfo(b);
-    } catch (e: any) {
-      showNotification(e?.message || 'Ошибка обновления оплаты', 'error');
+    } catch (e: unknown) {
+      const message = e instanceof Error ? e.message : 'Ошибка обновления оплаты';
+      showNotification(message, 'error');
     } finally {
       setPayMethodLoading(false);
     }
@@ -184,9 +186,10 @@ const BillingPage: React.FC = () => {
     try {
       await toggleAutoRenew(!autoRenew);
       showNotification(`Автопродление ${!autoRenew ? 'включено' : 'отключено'}`, 'success');
-    } catch (e: any) {
+    } catch (e: unknown) {
       setAutoRenew((prev) => !prev);
-      showNotification(e?.message || 'Ошибка смены автопродления', 'error');
+      const message = e instanceof Error ? e.message : 'Ошибка смены автопродления';
+      showNotification(message, 'error');
     }
   };
 

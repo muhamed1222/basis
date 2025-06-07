@@ -12,7 +12,7 @@ const SECTIONS = [
   { id: "history", title: "Версии и история изменений" },
 ];
 
-const SECTION_CONTENT: Record<string, React.ReactNode> = {
+const SECTION_CONTENT: Record<string, React.ReactElement> = {
   terms: (
     <>
       <h2>Пользовательское соглашение (Terms of Service)</h2>
@@ -143,7 +143,7 @@ const LegalPage: React.FC = () => {
   const filteredSections = SECTIONS.filter(
     (s) =>
       s.title.toLowerCase().includes(search.toLowerCase()) ||
-      (SECTION_CONTENT[s.id] as any)?.props?.children
+      SECTION_CONTENT[s.id]?.props.children
         ?.toString()
         ?.toLowerCase()
         .includes(search.toLowerCase())
