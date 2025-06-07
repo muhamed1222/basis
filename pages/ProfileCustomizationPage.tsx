@@ -10,6 +10,7 @@ import { Toast } from '../components/Toast';
 import { fetchProfile, saveProfile, ProfileData } from '../services/profileService';
 import { checkSlugUnique } from '../services/slugService';
 import { Button } from '../ui/Button';
+import Spinner from '../ui/Spinner';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
 const BLOCK_TYPES = [
@@ -69,7 +70,7 @@ const ProfileCustomizationPage: React.FC = () => {
     setProfile((p) => ({ ...p, blocks: p.blocks.filter((_, i) => i !== index) }));
   };
 
-  const updateBlock = (index: number, props: any) => {
+  const updateBlock = (index: number, props: Record<string, unknown>) => {
     setProfile((p) => ({
       ...p,
       blocks: p.blocks.map((b, i) => (i === index ? { ...b, ...props } : b)),
@@ -180,7 +181,13 @@ const ProfileCustomizationPage: React.FC = () => {
               onChange={(e) => setProfile((p) => ({ ...p, color: e.target.value }))}
             />
           </div>
-          <Button onClick={handleSave} disabled={saving || !slugValid} className="mt-6 px-5 py-3 w-full bg-indigo-600 text-white rounded font-bold">
+          <Button
+            onClick={handleSave}
+            disabled={saving || !slugValid}
+            aria-busy={saving}
+            className="mt-6 px-5 py-3 w-full bg-indigo-600 text-white rounded font-bold flex items-center justify-center"
+          >
+            {saving && <Spinner size="h-4 w-4" className="mr-2" />}
             {saving ? 'Сохраняем…' : 'Сохранить профиль'}
           </Button>
         </aside>
