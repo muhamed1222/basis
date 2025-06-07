@@ -29,3 +29,9 @@ export interface ShareActionItem {
   bgColor?: string; // For icon container if needed
   iconClassName?: string; // Custom classes for the icon itself
 }
+
+export interface UserProfile {
+  name: string;
+  email: string;
+  bio: string;
+}
