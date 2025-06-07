@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StandardPageLayout } from '../App';
 import { Link } from 'react-router-dom';
+import { useAsync } from '../hooks/useAsync';
+import { fetchJson } from '../services/api';
+import { z } from 'zod';
+import { Loader } from '../components/Loader';
 
 const ProjectCardPlaceholder: React.FC<{ title: string; lastUpdated: string }> = ({ title, lastUpdated }) => (
   <div className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow p-4">
@@ -20,12 +24,19 @@ const ProjectCardPlaceholder: React.FC<{ title: string; lastUpdated: string }> =
 );
 
 const DashboardPage: React.FC = () => {
-  // Dummy project data
-  const projects = [
-    { id: '1', title: 'Мое Портфолио v1', lastUpdated: 'Вчера, 18:30' },
-    { id: '2', title: 'Проект "Basis Showcase"', lastUpdated: '2 дня назад' },
-    { id: '3', title: 'Лендинг для Стартапа', lastUpdated: '10.07.2024' },
-  ];
+  const schema = z.array(
+    z.object({
+      id: z.string(),
+      title: z.string(),
+      lastUpdated: z.string(),
+    })
+  );
+
+  const { data: projects, loading, run } = useAsync(() => fetchJson('/api/projects', schema));
+
+  useEffect(() => {
+    run();
+  }, [run]);
 
   return (
     <StandardPageLayout title="3. Dashboard">
@@ -50,15 +61,16 @@ const DashboardPage: React.FC = () => {
 
         <section>
           <h2 className="text-xl font-semibold font-pragmatica mb-3 text-gray-700">Список ваших страниц/проектов</h2>
-          {projects.length > 0 ? (
+          {loading && <Loader />}
+          {!loading && projects && projects.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {projects.map(project => (
                 <ProjectCardPlaceholder key={project.id} title={project.title} lastUpdated={project.lastUpdated} />
               ))}
             </div>
-          ) : (
+          ) : !loading ? (
             <p className="text-gray-600">У вас пока нет созданных страниц. Начните с создания новой!</p>
-          )}
+          ) : null}
         </section>
 
         <div className="grid md:grid-cols-2 gap-6 pt-6 border-t border-gray-200">
