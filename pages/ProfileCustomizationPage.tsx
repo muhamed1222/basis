@@ -8,7 +8,6 @@ import { RichTextEditor } from '../components/RichTextEditor';
 import { ProfileLayoutSelector } from '../components/ProfileLayoutSelector';
 import { Toast } from '../components/Toast';
 import { fetchProfile, saveProfile, ProfileData } from '../services/profileService';
-import { useSlugValidation } from '../hooks/useSlugValidation';
 import { Button } from '../ui/Button';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
@@ -18,7 +17,6 @@ const BLOCK_TYPES = [
   { type: 'divider', label: 'Разделитель', default: {} },
 ];
 
-const RESERVED_SLUGS = ['admin', 'login', 'me', 'profile'];
 
 const ProfileCustomizationPage: React.FC = () => {
   const [profile, setProfile] = useState<ProfileData>({
@@ -76,6 +74,7 @@ const ProfileCustomizationPage: React.FC = () => {
     setSaving(true);
     try {
       await saveProfile(profile);
+      await registerSlug(profile.slug);
       setToast('Профиль сохранён!');
     } catch {
       setToast('Ошибка сохранения');
