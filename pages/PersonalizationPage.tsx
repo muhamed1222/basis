@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StandardPageLayout } from '../App';
+import StandardPageLayout from '../layouts/StandardPageLayout';
 import { Button } from '../ui/Button';
 import { RichTextEditor } from '../components/RichTextEditor';
 

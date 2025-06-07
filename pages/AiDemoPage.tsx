@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StandardPageLayout } from '../App';
+import StandardPageLayout from '../layouts/StandardPageLayout';
 import { useGenerateProfile } from '../hooks/useGenerateProfile';
 import { Button } from '../ui/Button';
 
