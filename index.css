@@ -17,3 +17,9 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
 }
+.onboarding-highlight {
+  box-shadow: 0 0 0 3px #3b82f6;
+  border-radius: 4px;
+  position: relative;
+  z-index: 50;
+}

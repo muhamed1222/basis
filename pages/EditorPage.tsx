@@ -1,9 +1,17 @@
-import React from 'react';
+
 
 const EditorPage: React.FC = () => {
+  const [template, setTemplate] = useState<string | null>(null);
+
+  if (!template) {
+    return (
+      <StandardPageLayout title="Выбор шаблона">
+        <TemplateGallery onSelect={(id) => setTemplate(id)} />
+      </StandardPageLayout>
+    );
+  }
+
   return (
-    // We use StandardPageLayout to keep the header, but the actual editor might need a more custom full-height layout.
-    // For this placeholder, we'll fit it within the standard content area.
     <StandardPageLayout title="4. Editor (Редактор страницы)">
       <div className="flex flex-col lg:flex-row gap-4 h-[calc(100vh-250px)] min-h-[500px]">
         {' '}
@@ -47,15 +55,21 @@ const EditorPage: React.FC = () => {
           {/* Top Controls for Editor */}
           <div className="bg-white p-2 border-b border-gray-300 rounded-t-lg flex justify-between items-center">
             <div className="flex items-center space-x-2">
-              <button className="px-3 py-1.5 text-xs bg-blue-500 text-white rounded hover:bg-blue-600">
-                Сохранить
-              </button>
-              <button className="px-3 py-1.5 text-xs bg-green-500 text-white rounded hover:bg-green-600">
-                Опубликовать
-              </button>
-              <button className="px-3 py-1.5 text-xs bg-gray-500 text-white rounded hover:bg-gray-600">
-                Предпросмотр
-              </button>
+              <Tooltip text="Сохранить изменения">
+                <button className="px-3 py-1.5 text-xs bg-blue-500 text-white rounded hover:bg-blue-600">
+                  Сохранить
+                </button>
+              </Tooltip>
+              <Tooltip text="Опубликовать страницу">
+                <button className="px-3 py-1.5 text-xs bg-green-500 text-white rounded hover:bg-green-600">
+                  Опубликовать
+                </button>
+              </Tooltip>
+              <Tooltip text="Посмотреть как выглядит страница">
+                <button className="px-3 py-1.5 text-xs bg-gray-500 text-white rounded hover:bg-gray-600">
+                  Предпросмотр
+                </button>
+              </Tooltip>
             </div>
             <div className="flex items-center space-x-2">
               {/* Undo/Redo Placeholder */}
@@ -76,9 +90,6 @@ const EditorPage: React.FC = () => {
           </div>
           {/* Canvas */}
           <div className="flex-1 p-4 overflow-auto">
-            <div className="w-full max-w-3xl mx-auto min-h-[300px] bg-white shadow-inner border border-dashed border-gray-400 rounded-md p-4 transition-all">
-              <BlockEditor />
-            </div>
           </div>
         </main>
         {/* Right Sidebar: Customization & Settings */}
