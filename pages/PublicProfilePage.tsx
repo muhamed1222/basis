@@ -1,6 +1,11 @@
 
+import { useState } from 'react';
 import { ProfileSidebar } from '../components/ProfileSidebar';
 import { ProjectShowcaseGrid } from '../components/ProjectShowcaseGrid';
+import { PublishProfileButton } from '../components/PublishProfileButton';
+import { ReactionBar } from '../components/ReactionBar';
+import { Comments } from '../components/Comments';
+import { ShareModal } from '../components/ShareModal';
 import {
   SettingsAltIcon,
   TargetIcon,

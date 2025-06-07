@@ -1,4 +1,7 @@
-
+import { useState } from 'react';
+import StandardPageLayout from '../layouts/StandardPageLayout';
+import { TemplateGallery } from '../components/TemplateGallery';
+import { Tooltip } from '../components/Tooltip';
 
 const EditorPage: React.FC = () => {
   const [template, setTemplate] = useState<string | null>(null);

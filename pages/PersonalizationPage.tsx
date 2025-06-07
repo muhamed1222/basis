@@ -16,6 +16,7 @@ const PersonalizationPage: React.FC = () => {
   const [slug, setSlug] = useState('');
   const [slugValid, setSlugValid] = useState<boolean | null>(null);
   const [layout, setLayout] = useState<'feed' | 'grid' | 'cards'>('feed');
+  const layoutOptions = ['feed', 'grid', 'cards'] as const;
   const [blocks, setBlocks] = useState<string[]>([
     'Кнопка 1',
     'Кнопка 2',
@@ -129,13 +130,13 @@ const PersonalizationPage: React.FC = () => {
           <div>
             <label className="block mb-1 font-medium">Структура профиля</label>
             <div className="flex items-center gap-2">
-              {['feed', 'grid', 'cards'].map((opt) => (
+              {layoutOptions.map((opt) => (
                 <label key={opt} className="flex items-center gap-1">
                   <input
                     type="radio"
                     value={opt}
                     checked={layout === opt}
-                    onChange={() => setLayout(opt as any)}
+                    onChange={() => setLayout(opt)}
                   />
                   {opt}
                 </label>
