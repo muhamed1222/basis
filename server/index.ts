@@ -9,6 +9,10 @@ import OAuth2Server from 'oauth2-server';
 const app = express();
 app.use(express.json());
 
+// Slug management
+const RESERVED_SLUGS = new Set(['admin', 'login', 'me', 'profile']);
+const usedSlugs = new Set<string>();
+
 // Simple in-memory OAuth model
 const users: Record<string, { id: string; password: string }> = {
   user: { id: 'user', password: 'pass' },
@@ -92,6 +96,33 @@ app.post('/api/login', (req, res) => {
   } else {
     res.status(401).json({ error: 'Invalid credentials' });
   }
+});
+
+// Slug endpoints
+app.get('/api/check-slug', (req, res) => {
+  const slug = String(req.query.slug || '').trim().toLowerCase();
+  const valid = /^[a-zA-Z0-9-_]{3,20}$/.test(slug);
+  if (!valid) {
+    res.json({ unique: false });
+    return;
+  }
+  const unique = !RESERVED_SLUGS.has(slug) && !usedSlugs.has(slug);
+  res.json({ unique });
+});
+
+app.post('/api/register-slug', (req, res) => {
+  const slug = String(req.body?.slug || '').trim().toLowerCase();
+  const valid = /^[a-zA-Z0-9-_]{3,20}$/.test(slug);
+  if (!valid) {
+    res.status(400).json({ success: false });
+    return;
+  }
+  if (RESERVED_SLUGS.has(slug) || usedSlugs.has(slug)) {
+    res.status(409).json({ success: false });
+    return;
+  }
+  usedSlugs.add(slug);
+  res.json({ success: true });
 });
 
 // GraphQL setup
