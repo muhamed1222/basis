@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useToast } from '../components/Toast';
+import { useToast } from '../components/ToastProvider';
 
 export interface AsyncState<T> {
   loading: boolean;
@@ -9,7 +9,7 @@ export interface AsyncState<T> {
 
 export function useAsync<T>(asyncFn: () => Promise<T>) {
   const [state, setState] = useState<AsyncState<T>>({ loading: false });
-  const { showToast } = useToast();
+  const { showError } = useToast();
 
   const run = useCallback(async () => {
     setState({ loading: true });
@@ -18,7 +18,7 @@ export function useAsync<T>(asyncFn: () => Promise<T>) {
       setState({ loading: false, data });
     } catch (error) {
       setState({ loading: false, error });
-      showToast('Ошибка');
+      showError('Ошибка');
     }
   }, [asyncFn]);
 
