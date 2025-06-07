@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ProfileSidebar } from '../components/ProfileSidebar';
 import { ProjectShowcaseGrid } from '../components/ProjectShowcaseGrid';
 import {
@@ -12,6 +12,9 @@ import {
   WindowFilesIcon,
 } from '../components/icons/IconComponents';
 import type { ShareActionItem } from '../types';
+import { ShareModal } from '../components/ShareModal';
+import { PublishProfileButton } from '../components/PublishProfileButton';
+import { useProfileMeta } from '../hooks/useProfileMeta';
 
 // This component now represents Section 5: Public Page
 
@@ -66,6 +69,8 @@ const BottomRightShareBar: React.FC = () => {
     },
   ];
 
+  const [open, setOpen] = useState(false);
+
   return (
     <div
       className="fixed bottom-[32px] left-1/2 transform -translate-x-1/2 bg-[rgba(255,255,255,0.88)] rounded-[16px] p-[12px] flex items-center gap-[16px] shadow-lg z-50"
@@ -75,13 +80,17 @@ const BottomRightShareBar: React.FC = () => {
       }}
     >
       <div className="relative group">
-        <button className="px-[18px] py-[6px] bg-[#4EDD76] text-white text-[14px] font-semibold leading-[20px] rounded-[6px] shadow-[0px_2px_3px_rgba(0,0,0,0.06)] overflow-hidden transition-colors hover:bg-green-500">
+        <button
+          onClick={() => setOpen(true)}
+          className="px-[18px] py-[6px] bg-[#4EDD76] text-white text-[14px] font-semibold leading-[20px] rounded-[6px] shadow-[0px_2px_3px_rgba(0,0,0,0.06)] overflow-hidden transition-colors hover:bg-green-500"
+        >
           Share my Bento
           <div
             className="absolute top-[-50%] left-[-20%] w-[200%] h-[200%] bg-[rgba(255,255,255,0.2)] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             style={{ transform: 'rotate(20deg)', filter: 'blur(10px)' }}
           ></div>
         </button>
+        {open && <ShareModal url={window.location.href} onClose={() => setOpen(false)} />}
       </div>
       <div className="w-[2px] h-[16px] bg-[rgba(0,0,0,0.12)] rounded-full"></div>
       <div className="flex items-center gap-[4px]">
@@ -110,6 +119,8 @@ const BottomRightShareBar: React.FC = () => {
 };
 
 const PublicProfilePage: React.FC = () => {
+  useProfileMeta({ title: 'Профиль', description: 'Описание профиля', image: '/avatar.png' });
+  const [slug] = useState('my-profile');
   return (
     // main-content-area class gives the white bg and padding
     <div className="main-content-area relative flex flex-col md:flex-row gap-[80px]">
@@ -117,6 +128,9 @@ const PublicProfilePage: React.FC = () => {
       <ProjectShowcaseGrid />
       <BottomLeftSocialBar />
       <BottomRightShareBar />
+      <div className="absolute top-4 right-4">
+        <PublishProfileButton slug={slug} data={{}} />
+      </div>
     </div>
   );
 };
