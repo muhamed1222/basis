@@ -1,5 +1,5 @@
 import React from 'react';
-import { StandardPageLayout } from '../App';
+import StandardPageLayout from '../layouts/StandardPageLayout';
 
 const EditorPage: React.FC = () => {
   return (
