@@ -1,14 +1,25 @@
 :root {
   --color-bg: #ffffff;
   --color-text: #111111;
+  --block-bg: #ffffff;
+  --block-text: #000000;
+  --block-font: inherit;
 }
 
 [data-theme='dark'] {
   --color-bg: #111111;
   --color-text: #ffffff;
+  --block-bg: #222222;
+  --block-text: #ffffff;
 }
 
 body {
   background: var(--color-bg);
   color: var(--color-text);
+}
+.onboarding-highlight {
+  box-shadow: 0 0 0 3px #3b82f6;
+  border-radius: 4px;
+  position: relative;
+  z-index: 50;
 }
