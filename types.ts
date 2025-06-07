@@ -1,8 +1,8 @@
-export type BentoCardVariant = 
-  'medium_text_right_image' | // Corresponds to data-size="Medium"
-  'big_text_over_image' |   // Corresponds to data-size="Big"
-  'smol_icon_text_vertical' | // Corresponds to data-size="Smol"
-  'custom_action_bar'; // For the "Share my Bento" bar, though it's a separate component
+export type BentoCardVariant =
+  | 'medium_text_right_image' // Corresponds to data-size="Medium"
+  | 'big_text_over_image' // Corresponds to data-size="Big"
+  | 'smol_icon_text_vertical' // Corresponds to data-size="Smol"
+  | 'custom_action_bar'; // For the "Share my Bento" bar, though it's a separate component
 
 export interface BentoItem {
   id: string;
