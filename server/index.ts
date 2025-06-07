@@ -27,8 +27,6 @@ const users: Record<string, { id: string; password: string }> = {
   test: { id: 'test', password: 'testpass' },
 };
 
-const reservedSlugs = ['admin', 'login', 'me', 'profile'];
-const usedSlugs = new Set<string>();
 
 const oauth = new OAuth2Server({
   model: {
@@ -124,6 +122,13 @@ app.post('/api/login', (req, res) => {
 
 // Slug endpoints
 app.get('/api/check-slug', (req, res) => {
+  const slug = String(req.query.slug || '').toLowerCase();
+  if (!slug) {
+    res.status(400).json({ error: 'Missing slug' });
+    return;
+  }
+  const available = !RESERVED_SLUGS.has(slug) && !usedSlugs.has(slug);
+  res.status(available ? 200 : 409).json({ available });
 });
 
 // GraphQL setup
