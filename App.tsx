@@ -20,9 +20,15 @@ const MainLayout: React.FC = () => {
   return (
     // Outer container with gray background and padding
     <div className="min-h-screen p-[8px] flex flex-col items-center overflow-x-hidden">
-      {/* Max width wrapper */}
-      <div className="w-full max-w-[1440px] flex flex-col">
-        <Header />
+      {/* Fixed Header */}
+      <div className="fixed top-[8px] left-[8px] right-[8px] z-50">
+        <div className="w-full max-w-[1440px] mx-auto">
+          <Header />
+        </div>
+      </div>
+      
+      {/* Max width wrapper with top padding for fixed header */}
+      <div className="w-full max-w-[1440px] flex flex-col pt-[60px]"> {/* Added padding-top for fixed header */}
         <main className="flex-1 flex flex-col">
           <Outlet /> {/* Child routes will render here */}
         </main>
