@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Basis Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- Pragmatica Next VF is likely a commercial font. Inter will be the primary fallback. -->
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-dom/client": "https://esm.sh/react-dom@^19.1.0/client",
+    "react/jsx-runtime": "https://esm.sh/react@^19.1.0/jsx-runtime",
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react-router-dom": "https://esm.sh/react-router-dom@6"
+  }
+}
+</script>
+  <style>
+    body { 
+      font-family: 'Inter', sans-serif; 
+      background-color: #D2D2D2; /* Outer background from new design */
+    }
+    .font-pragmatica {
+      font-family: 'Pragmatica Next VF', 'Inter', sans-serif; /* Specify Pragmatica, fallback to Inter */
+    }
+    /* Custom scrollbar for a cleaner look if desired */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f0f0f0;
+      border-radius: 3px;
+    }
+    .main-content-area { /* Common styling for the white content box */
+      background-color: white;
+      border-radius: 12px;
+      padding: 52px;
+      margin-top: 8px;
+      flex: 1 1 0;
+    }
+  </style>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
