@@ -34,7 +34,7 @@ const BottomRightShareBar: React.FC = () => {
 
   return (
     <div 
-      className="absolute right-[calc(52px+20px)] bottom-[32px] bg-[rgba(255,255,255,0.88)] rounded-[16px] p-[12px] flex items-center gap-[16px] shadow-lg z-10"
+      className="fixed bottom-[32px] left-1/2 transform -translate-x-1/2 bg-[rgba(255,255,255,0.88)] rounded-[16px] p-[12px] flex items-center gap-[16px] shadow-lg z-50"
       style={{ backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)' }}
     >
       <div className="relative group">
