@@ -1,5 +1,7 @@
 
 import { Link, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import StandardPageLayout from '../layouts/StandardPageLayout';
 import { useAuth } from '../contexts/AuthContext';
 
 const AuthPage: React.FC = () => {

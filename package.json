@@ -21,7 +21,9 @@
     "react-easy-crop": "^5.4.2",
     "react-markdown": "^10.1.0",
     "react-router-dom": "6",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "react-toastify": "11.0.5",
+    "qrcode": "1.5.4"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
