@@ -27,6 +27,9 @@ const users: Record<string, { id: string; password: string }> = {
   test: { id: 'test', password: 'testpass' },
 };
 
+const reservedSlugs = ['admin', 'login', 'me', 'profile'];
+const usedSlugs = new Set<string>();
+
 const oauth = new OAuth2Server({
   model: {
     async getClient(clientId: string, clientSecret: string) {
@@ -121,29 +124,6 @@ app.post('/api/login', (req, res) => {
 
 // Slug endpoints
 app.get('/api/check-slug', (req, res) => {
-  const slug = String(req.query.slug || '').trim().toLowerCase();
-  const valid = /^[a-zA-Z0-9-_]{3,20}$/.test(slug);
-  if (!valid) {
-    res.json({ unique: false });
-    return;
-  }
-  const unique = !RESERVED_SLUGS.has(slug) && !usedSlugs.has(slug);
-  res.json({ unique });
-});
-
-app.post('/api/register-slug', (req, res) => {
-  const slug = String(req.body?.slug || '').trim().toLowerCase();
-  const valid = /^[a-zA-Z0-9-_]{3,20}$/.test(slug);
-  if (!valid) {
-    res.status(400).json({ success: false });
-    return;
-  }
-  if (RESERVED_SLUGS.has(slug) || usedSlugs.has(slug)) {
-    res.status(409).json({ success: false });
-    return;
-  }
-  usedSlugs.add(slug);
-  res.json({ success: true });
 });
 
 // GraphQL setup

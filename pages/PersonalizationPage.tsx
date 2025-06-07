@@ -5,10 +5,6 @@ import { CoverUploader } from '../components/CoverUploader';
 import { SlugEditor } from '../components/SlugEditor';
 import { ProfileLayoutSelector } from '../components/ProfileLayoutSelector';
 import { RichTextEditor } from '../components/RichTextEditor';
-import { Button } from '../ui/Button';
-import { useSlugValidation } from '../hooks/useSlugValidation';
-
-const RESERVED_SLUGS = ['admin', 'test', 'profile'];
 
 const PersonalizationPage: React.FC = () => {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
@@ -23,10 +19,6 @@ const PersonalizationPage: React.FC = () => {
   ]);
 
 
-  const copySlug = () => {
-    const url = `${window.location.origin}/u/${slug}`;
-    navigator.clipboard.writeText(url);
-  };
 
   const updateBlock = (index: number, val: string) => {
     setBlocks((b) => {
@@ -51,14 +43,6 @@ const PersonalizationPage: React.FC = () => {
     <StandardPageLayout title="Редактор персонализации">
       <div className="flex flex-col lg:flex-row gap-6">
         <aside className="w-full lg:w-1/3 space-y-4">
-          <AvatarUploader onChange={setAvatarPreview} />
-          <CoverUploader onChange={setCoverPreview} />
-          <SlugEditor
-            value={slug}
-            onChange={setSlug}
-            valid={slugValid}
-            base="https://basis.app/"
-          />
           <div className="space-y-4">
             {blocks.map((val, i) => (
               <div key={i}>

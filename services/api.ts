@@ -21,7 +21,14 @@ export async function fetchJson<T>(
     body: body ? JSON.stringify(body) : undefined,
   });
   if (!response.ok) {
-    throw new Error(`HTTP error ${response.status}`);
+    let message = `HTTP error ${response.status}`;
+    try {
+      const err = await response.json();
+      message = err.error || message;
+    } catch {
+      /* ignore */
+    }
+    throw new Error(message);
   }
   const json = await response.json();
   return schema.parse(json);

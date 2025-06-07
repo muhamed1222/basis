@@ -20,17 +20,7 @@ const AdminSectionLink: React.FC<{
 );
 
 const AdminPage: React.FC = () => {
-  const { user, refreshUser, loading } = useAuth();
 
-  useEffect(() => {
-    refreshUser();
-  }, [refreshUser]);
-
-  const isStaff = user?.role === 'staff';
-
-  if (loading) {
-    return <StandardPageLayout title="Loading" />;
-  }
 
   if (!isStaff) {
     return (
