@@ -52,7 +52,6 @@ const ProfileCustomizationPage: React.FC = () => {
     setProfile((p) => ({ ...p, blocks: p.blocks.filter((_, i) => i !== index) }));
   };
 
-  const updateBlock = (index: number, props: Record<string, unknown>) => {
     setProfile((p) => ({
       ...p,
       blocks: p.blocks.map((b, i) => (i === index ? { ...b, ...props } : b)),

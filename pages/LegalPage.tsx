@@ -12,7 +12,7 @@ const SECTIONS = [
   { id: "history", title: "Версии и история изменений" },
 ];
 
-const SECTION_CONTENT: Record<string, React.ReactNode> = {
+const SECTION_CONTENT: Record<string, React.ReactElement> = {
   terms: (
     <>
       <h2>Пользовательское соглашение (Terms of Service)</h2>
@@ -150,9 +150,6 @@ const LegalPage: React.FC = () => {
         : '';
     return (
       s.title.toLowerCase().includes(search.toLowerCase()) ||
-      text.toLowerCase().includes(search.toLowerCase())
-    );
-  });
 
   return (
     <StandardPageLayout title="Правовые документы и политика платформы Basis">

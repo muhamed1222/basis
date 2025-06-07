@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier -w .",
-    "server": "ts-node server/index.ts"
+    "server": "ts-node server/index.ts",
+    "postinstall": "npm rebuild rollup"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.3",
@@ -30,6 +31,7 @@
     "express-session": "^1.17.3"
   },
   "devDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.42.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/node": "^22.14.0",
