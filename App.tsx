@@ -14,6 +14,7 @@ import AnalyticsPage from './pages/AnalyticsPage';
 import SupportPage from './pages/SupportPage';
 import AdminPage from './pages/AdminPage';
 import LegalPage from './pages/LegalPage';
+import ProfileEditorPage from './pages/ProfileEditorPage';
 
 // Main layout to include Header and consistent structure
 const MainLayout: React.FC = () => {
@@ -84,6 +85,7 @@ const App: React.FC = () => {
         <Route path="auth" element={<AuthPage />} />
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="editor" element={<EditorPage />} />
+        <Route path="profile-editor" element={<ProfileEditorPage />} />
         <Route path="public-profile" element={<PublicProfilePage />} />{' '}
         {/* This is the existing detailed page */}
         <Route path="account" element={<AccountSettingsPage />} />
