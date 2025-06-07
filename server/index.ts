@@ -169,6 +169,117 @@ app.post('/webhook/event', (req, res) => {
   res.sendStatus(200);
 });
 
+// Simplified demo endpoints for the frontend
+app.get('/api/home', (_req, res) => {
+  const cases = [
+    {
+      id: '1',
+      title: 'Дизайнерское портфолио',
+      desc: 'Пример стильной страницы для креативных работ',
+      preview: 'https://placehold.co/600x400/png',
+      username: 'designer',
+    },
+    {
+      id: '2',
+      title: 'Профиль разработчика',
+      desc: 'Техническое портфолио с ссылками на проекты',
+      preview: 'https://placehold.co/600x400/png',
+      username: 'dev',
+    },
+    {
+      id: '3',
+      title: 'Личный блог',
+      desc: 'Пример странички для контент‑криэйтора',
+      preview: 'https://placehold.co/600x400/png',
+      username: 'blogger',
+    },
+  ];
+  const stats = { users: 1200, pages: 3400, integrations: 12 };
+  const reviews = [
+    {
+      id: '1',
+      name: 'Анна',
+      job: 'Дизайнер',
+      avatar: 'https://placehold.co/80/png',
+      text: 'Очень удобный сервис, создала портфолио за пару минут!',
+      stars: 5,
+    },
+    {
+      id: '2',
+      name: 'Иван',
+      job: 'Разработчик',
+      avatar: 'https://placehold.co/80/png',
+      text: 'Интеграции работают отлично, сайт загрузил код без проблем.',
+      stars: 4,
+    },
+  ];
+  res.json({ cases, stats, reviews });
+});
+
+app.get('/api/billing', (_req, res) => {
+  const tariffs = [
+    {
+      id: 'free',
+      name: 'Free',
+      price: '0₽',
+      features: ['1 страница', 'Базовые блоки', 'Поддержка Basis'],
+    },
+    {
+      id: 'pro',
+      name: 'Pro',
+      price: '499₽',
+      features: [
+        '10 страниц',
+        'Все блоки',
+        'Кастомный домен',
+        'Аналитика',
+        'Приоритетная поддержка',
+      ],
+      popular: true,
+    },
+    {
+      id: 'business',
+      name: 'Business',
+      price: '1499₽',
+      features: [
+        'Безлимит страниц',
+        'Командный доступ',
+        'API доступ',
+        'Персональный менеджер',
+      ],
+    },
+  ];
+  const billing = {
+    tariff: tariffs[0],
+    paymentMethod: 'Карта Visa **** **** **** 1234 (действительна до 12/25)',
+    autoRenew: true,
+  };
+  const history = [
+    {
+      date: '01.08.2024',
+      amount: '499₽',
+      status: 'Оплачено',
+      invoiceId: 'INV-2024-001',
+      invoiceLink: '#',
+    },
+    {
+      date: '01.07.2024',
+      amount: '499₽',
+      status: 'Оплачено',
+      invoiceId: 'INV-2024-002',
+      invoiceLink: '#',
+    },
+    {
+      date: '01.06.2024',
+      amount: '499₽',
+      status: 'Оплачено',
+      invoiceId: 'INV-2024-003',
+      invoiceLink: '#',
+    },
+  ];
+  res.json({ tariffs, billing, history });
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`API server running on http://localhost:${PORT}`);
