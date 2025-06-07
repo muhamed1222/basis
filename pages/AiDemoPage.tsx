@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import StandardPageLayout from '../layouts/StandardPageLayout';
 import { useGenerateProfile } from '../hooks/useGenerateProfile';
 import { Button } from '../ui/Button';
+import type { GeneratedProfile } from '../services/ai';
 
 type GenerateInput = {
   goals: string;
@@ -10,10 +11,15 @@ type GenerateInput = {
 
 const initialInput: GenerateInput = { goals: '', description: '' };
 
+type HistoryItem = {
+  input: GenerateInput;
+  result: GeneratedProfile;
+};
+
 const AiDemoPage: React.FC = () => {
   const { loading, data, error, run } = useGenerateProfile();
   const [input, setInput] = useState<GenerateInput>(initialInput);
-  const [history, setHistory] = useState<any[]>([]);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,

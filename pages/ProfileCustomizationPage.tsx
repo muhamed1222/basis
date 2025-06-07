@@ -204,7 +204,7 @@ const ProfileCustomizationPage: React.FC = () => {
                         key={i}
                         href={block.url}
                         target="_blank"
-                        rel="noopener"
+                        rel="noopener noreferrer"
                         className={`block px-4 py-2 text-center rounded font-semibold transition-colors ${
                           block.style === 'primary'
                             ? 'bg-green-500 text-white hover:bg-green-600'
@@ -227,7 +227,7 @@ const ProfileCustomizationPage: React.FC = () => {
             </div>
           </div>
           <div className="text-xs text-gray-500 text-center">
-            <a href={`/u/${profile.slug}`} target="_blank" rel="noopener" className="underline hover:text-indigo-600">
+            <a href={`/u/${profile.slug}`} target="_blank" rel="noopener noreferrer" className="underline hover:text-indigo-600">
               Перейти к своей странице →
             </a>
           </div>

@@ -2,13 +2,20 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import StandardPageLayout from "../layouts/StandardPageLayout";
 import { Skeleton } from "../components/Skeleton";
-import { fetchCases, fetchStats, fetchReviews } from "../api/home";
+import {
+  fetchCases,
+  fetchStats,
+  fetchReviews,
+  type HomeCase,
+  type HomeStats,
+  type HomeReview,
+} from "../api/home";
 
 const HomePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [cases, setCases] = useState<any[]>([]);
-  const [stats, setStats] = useState<any>(null);
-  const [reviews, setReviews] = useState<any[]>([]);
+  const [cases, setCases] = useState<HomeCase[]>([]);
+  const [stats, setStats] = useState<HomeStats | null>(null);
+  const [reviews, setReviews] = useState<HomeReview[]>([]);
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
 
@@ -288,9 +295,9 @@ const HomePage: React.FC = () => {
               &copy; {new Date().getFullYear()} Basis Platform. Все права защищены.
             </p>
             <div className="flex gap-4">
-              <a href="https://twitter.com/" target="_blank" rel="noopener" aria-label="Twitter" className="hover:text-gray-700">Twitter</a>
-              <a href="https://linkedin.com/" target="_blank" rel="noopener" aria-label="LinkedIn" className="hover:text-gray-700">LinkedIn</a>
-              <a href="https://t.me/" target="_blank" rel="noopener" aria-label="Telegram" className="hover:text-gray-700">Telegram</a>
+              <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="hover:text-gray-700">Twitter</a>
+              <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className="hover:text-gray-700">LinkedIn</a>
+              <a href="https://t.me/" target="_blank" rel="noopener noreferrer" aria-label="Telegram" className="hover:text-gray-700">Telegram</a>
             </div>
             <div className="text-xs text-gray-400 mt-1">Сделано с ♥ в Rara Avis</div>
           </div>
