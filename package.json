@@ -10,28 +10,37 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint . --ext .ts,.tsx",
-    "format": "prettier -w ."
+    "format": "prettier -w .",
+    "server": "ts-node server/index.ts"
   },
   "dependencies": {
+    "apollo-server-express": "^3.13.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "graphql": "^16.11.0",
+    "oauth2-server": "^3.1.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "6",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "ts-node": "^10.9.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/node": "^22.14.0",
-    "jsdom": "^26.1.0",
-    "typescript": "~5.7.2",
-    "vite": "^6.2.0",
-    "vitest": "^3.2.2",
+    "@types/react": "^18.2.57",
+    "@types/react-dom": "^18.2.17",
+    "@typescript-eslint/eslint-plugin": "^7.7.0",
+    "@typescript-eslint/parser": "^7.7.0",
     "eslint": "^8.57.0",
     "eslint-plugin-react": "^7.33.2",
+    "jsdom": "^26.1.0",
     "prettier": "^3.2.5",
-    "@typescript-eslint/parser": "^7.7.0",
-    "@typescript-eslint/eslint-plugin": "^7.7.0",
-    "@types/react": "^18.2.57",
-    "@types/react-dom": "^18.2.17"
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0",
+    "vitest": "^3.2.2"
   }
 }
