@@ -13,9 +13,15 @@
     "format": "prettier -w ."
   },
   "dependencies": {
+    "dompurify": "^3.2.6",
+    "emoji-picker-react": "^4.12.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-easy-crop": "^5.4.2",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "6",
+    "slugify": "^1.6.6",
+    "uuid": "^11.1.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
