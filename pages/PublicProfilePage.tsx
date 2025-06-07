@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+
 import { ProfileSidebar } from '../components/ProfileSidebar';
 import { ProjectShowcaseGrid } from '../components/ProjectShowcaseGrid';
 import {
@@ -12,9 +12,6 @@ import {
   WindowFilesIcon,
 } from '../components/icons/IconComponents';
 import type { ShareActionItem } from '../types';
-import { ShareModal } from '../components/ShareModal';
-import { PublishProfileButton } from '../components/PublishProfileButton';
-import { useProfileMeta } from '../hooks/useProfileMeta';
 
 // This component now represents Section 5: Public Page
 
@@ -119,13 +116,15 @@ const BottomRightShareBar: React.FC = () => {
 };
 
 const PublicProfilePage: React.FC = () => {
-  useProfileMeta({ title: 'Профиль', description: 'Описание профиля', image: '/avatar.png' });
-  const [slug] = useState('my-profile');
   return (
     // main-content-area class gives the white bg and padding
     <div className="main-content-area relative flex flex-col md:flex-row gap-[80px]">
       <ProfileSidebar />
-      <ProjectShowcaseGrid />
+      <div className="flex-1">
+        <ProjectShowcaseGrid />
+        <ReactionBar />
+        <Comments />
+      </div>
       <BottomLeftSocialBar />
       <BottomRightShareBar />
       <div className="absolute top-4 right-4">

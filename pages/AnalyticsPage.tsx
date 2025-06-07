@@ -1,5 +1,4 @@
 import React from 'react';
-import StandardPageLayout from '../layouts/StandardPageLayout';
 
 const StatCard: React.FC<{
   title: string;
@@ -39,53 +38,53 @@ const ChartPlaceholder: React.FC<{ title: string; height?: string }> = ({
 );
 
 const AnalyticsPage: React.FC = () => {
+  const { data } = useAnalytics();
   return (
     <StandardPageLayout title="8. Analytics">
       <div className="space-y-8">
         {/* Date Range Picker Placeholder */}
-        <div className="flex justify-end items-center space-x-2 mb-6">
-          <span className="text-sm text-gray-600">Период:</span>
-          <input
-            type="date"
-            defaultValue="2024-07-01"
-            className="p-1.5 border border-gray-300 rounded-md text-sm"
-          />
-          <span className="text-sm text-gray-600">-</span>
-          <input
-            type="date"
-            defaultValue="2024-07-31"
-            className="p-1.5 border border-gray-300 rounded-md text-sm"
-          />
-          <button className="px-3 py-1.5 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700">
-            Применить
-          </button>
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <label className="text-sm mr-2">
+              <input
+                type="checkbox"
+                checked={isIncognito()}
+                onChange={(e) => setIncognito(e.target.checked)}
+                className="mr-1"
+              />
+              Инкогнито
+            </label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-600">Период:</span>
+            <input
+              type="date"
+              defaultValue="2024-07-01"
+              className="p-1.5 border border-gray-300 rounded-md text-sm"
+            />
+            <span className="text-sm text-gray-600">-</span>
+            <input
+              type="date"
+              defaultValue="2024-07-31"
+              className="p-1.5 border border-gray-300 rounded-md text-sm"
+            />
+            <button className="px-3 py-1.5 bg-indigo-600 text-white text-sm rounded-md hover:bg-indigo-700">
+              Применить
+            </button>
+          </div>
         </div>
 
         {/* Overview Stats */}
         <section className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <StatCard
-            title="Всего просмотров"
-            value="12,345"
-            change="15.2%"
-            changeType="positive"
-          />
-          <StatCard
-            title="Уникальные посетители"
-            value="8,765"
-            change="10.1%"
-            changeType="positive"
-          />
+          <StatCard title="Всего просмотров" value={String(data.views)} />
+          <StatCard title="Уникальные посетители" value={String(data.uniqueViews)} />
           <StatCard
             title="Всего кликов (CTA)"
-            value="1,230"
-            change="5.8%"
-            changeType="positive"
+            value={String(Object.values(data.linkClicks).reduce((a, b) => a + b, 0))}
           />
           <StatCard
-            title="Коэффициент конверсии"
-            value="7.5%"
-            change="0.5%"
-            changeType="negative"
+            title="Всего реакций"
+            value={String(Object.values(data.reactions).reduce((a, b) => a + b, 0))}
           />
         </section>
 
