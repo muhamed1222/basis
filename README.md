@@ -11,6 +11,8 @@
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+4. Запустите API сервер:
+   `npm run server`
 
 ## Структура проекта
 
@@ -25,6 +27,16 @@ layouts/         // компоненты раскладки
 routes/          // конфигурация маршрутов
 ```
 
+
+## API сервер
+
+В каталоге `server/` расположен простой сервер на Express с поддержкой OAuth2, GraphQL и документацией Swagger. Запуск сервера:
+
+```
+npm run server
+```
+
+REST‑эндпоинт `/api/profile` и GraphQL‑точка `/graphql` предоставляют базовый доступ к профилю пользователя. Токен можно получить через `/oauth/token`. Пример документации доступен на `/docs` после запуска сервера.
 
 ## Запуск тестов
 

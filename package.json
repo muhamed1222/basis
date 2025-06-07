@@ -10,11 +10,10 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint . --ext .ts,.tsx",
-    "format": "prettier -w ."
+    "format": "prettier -w .",
+    "server": "ts-node server/index.ts"
   },
   "dependencies": {
-    "dompurify": "^3.2.6",
-    "emoji-picker-react": "^4.12.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-easy-crop": "^5.4.2",
