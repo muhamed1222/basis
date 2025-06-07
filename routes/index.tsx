@@ -22,7 +22,7 @@ export const routes: RouteObject[] = [
       { path: 'auth', element: <AuthPage /> },
       { path: 'dashboard', element: <DashboardPage /> },
       { path: 'editor', element: <EditorPage /> },
-      { path: 'public-profile', element: <PublicProfilePage /> },
+      { path: 'public-profile/:slug', element: <PublicProfilePage /> },
       { path: 'account', element: <AccountSettingsPage /> },
       { path: 'billing', element: <BillingPage /> },
       { path: 'analytics', element: <AnalyticsPage /> },
