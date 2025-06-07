@@ -1,7 +1,4 @@
 import React from 'react';
-import { StandardPageLayout } from '../App';
-import { useAnalytics } from '../hooks/useAnalytics';
-import { isIncognito, setIncognito } from '../services/analytics';
 
 const StatCard: React.FC<{
   title: string;

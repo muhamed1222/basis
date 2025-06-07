@@ -13,11 +13,13 @@
     "format": "prettier -w ."
   },
   "dependencies": {
+    "dompurify": "^3.2.6",
+    "emoji-picker-react": "^4.12.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-easy-crop": "^5.4.2",
+    "react-markdown": "^10.1.0",
     "react-router-dom": "6",
-    "react-toastify": "^11.0.5",
-    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.6.3",
