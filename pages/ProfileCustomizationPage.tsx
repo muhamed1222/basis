@@ -8,7 +8,6 @@ import { RichTextEditor } from '../components/RichTextEditor';
 import { ProfileLayoutSelector } from '../components/ProfileLayoutSelector';
 import { Toast } from '../components/Toast';
 import { fetchProfile, saveProfile, ProfileData } from '../services/profileService';
-import { checkSlugUnique, registerSlug } from '../services/slugService';
 import { Button } from '../ui/Button';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
@@ -28,7 +27,7 @@ const ProfileCustomizationPage: React.FC = () => {
     color: '#2f80ed',
     blocks: [],
   });
-  const [slugValid, setSlugValid] = useState<boolean | null>(null);
+  const slugValid = useSlugValidation(profile.slug, RESERVED_SLUGS);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -41,22 +40,6 @@ const ProfileCustomizationPage: React.FC = () => {
     });
   }, []);
 
-  useEffect(() => {
-    if (!profile.slug) return setSlugValid(null);
-    if (!/^[a-zA-Z0-9-_]{3,20}$/.test(profile.slug)) {
-      setSlugValid(false);
-      return;
-    }
-    let cancelled = false;
-    checkSlugUnique(profile.slug)
-      .then((r) => {
-        if (!cancelled) setSlugValid(r.unique);
-      })
-      .catch(() => !cancelled && setSlugValid(false));
-    return () => {
-      cancelled = true;
-    };
-  }, [profile.slug]);
 
   const addBlock = (type: string) => {
     const blockType = BLOCK_TYPES.find((b) => b.type === type);
