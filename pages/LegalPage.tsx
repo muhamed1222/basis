@@ -140,7 +140,14 @@ const LegalPage: React.FC = () => {
   const [search, setSearch] = useState("");
 
   // Фильтрация по поиску
-  const filteredSections = SECTIONS.filter((s) => {
+const filteredSections = SECTIONS.filter(
+  (s) =>
+    s.title.toLowerCase().includes(search.toLowerCase()) ||
+    (SECTION_CONTENT[s.id] as any)?.props?.children
+      ?.toString()
+      ?.toLowerCase()
+      .includes(search.toLowerCase())
+);
 
   return (
     <StandardPageLayout title="Правовые документы и политика платформы Basis">
