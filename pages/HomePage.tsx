@@ -1,5 +1,7 @@
 
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import StandardPageLayout from '../layouts/StandardPageLayout';
 import { Skeleton } from '../components/Skeleton';
 
 const HomePage: React.FC = () => {

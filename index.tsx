@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
-import { ErrorBoundary } from './components/ErrorBoundary';
+import { AuthProvider } from './contexts/AuthContext';
 import './index.css';
 
 const savedTheme = localStorage.getItem('theme');
@@ -18,8 +18,16 @@ if (!rootElement) {
   throw new Error('Could not find root element to mount to');
 }
 
+const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-  </React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
+  </React.StrictMode>,
 );

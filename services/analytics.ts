@@ -1,3 +1,5 @@
+import { saveData, loadData } from './cloud';
+
 export interface Comment {
   id: string;
   text: string;
@@ -28,6 +30,25 @@ function load(): AnalyticsData {
   }
 }
 
+async function syncFromCloud() {
+  try {
+    const data = await loadData<AnalyticsData>('analytics', 'default');
+    if (data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function syncToCloud(data: AnalyticsData) {
+  try {
+    await saveData('analytics', 'default', data);
+  } catch (e) {
+    console.error(e);
+  }
+}
+
 function save(data: AnalyticsData) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
@@ -49,6 +70,7 @@ export function recordView() {
     sessionStorage.setItem('unique-viewed', '1');
   }
   save(data);
+  void syncToCloud(data);
 }
 
 export function recordLinkClick(id: string) {
@@ -56,6 +78,7 @@ export function recordLinkClick(id: string) {
   const data = load();
   data.linkClicks[id] = (data.linkClicks[id] || 0) + 1;
   save(data);
+  void syncToCloud(data);
 }
 
 export function recordReaction(emoji: string) {
@@ -63,6 +86,7 @@ export function recordReaction(emoji: string) {
   const data = load();
   data.reactions[emoji] = (data.reactions[emoji] || 0) + 1;
   save(data);
+  void syncToCloud(data);
 }
 
 export function addComment(text: string) {
@@ -74,12 +98,14 @@ export function addComment(text: string) {
     createdAt: new Date().toISOString(),
   });
   save(data);
+  void syncToCloud(data);
 }
 
 export function deleteComment(id: string) {
   const data = load();
   data.comments = data.comments.filter((c) => c.id !== id);
   save(data);
+  void syncToCloud(data);
 }
 
 export function getAnalytics(): AnalyticsData {
@@ -89,3 +115,6 @@ export function getAnalytics(): AnalyticsData {
 export function clearAnalytics() {
   localStorage.removeItem(STORAGE_KEY);
 }
+
+// Initial load from cloud
+syncFromCloud();

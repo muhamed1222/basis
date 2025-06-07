@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
+import * as auth from '../services/auth';
 
 export type UserRole = 'owner' | 'editor';
 
@@ -21,17 +22,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User>();
 
   const login = async (email: string, password: string) => {
-    // TODO: call API
-    setUser({ id: '1', email, role: 'owner' });
+    const u = await auth.login(email, password);
+    setUser(u);
   };
 
   const signup = async (email: string, password: string) => {
-    // TODO: call API
-    setUser({ id: '1', email, role: 'owner' });
+    const u = await auth.signup(email, password);
+    setUser(u);
   };
 
   const logout = async () => {
-    // TODO: call API
+    await auth.logout();
     setUser(undefined);
   };
 

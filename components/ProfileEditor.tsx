@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { saveData, loadData } from '../services/cloud';
 import { useUndoRedo } from '../hooks/useUndoRedo';
 import { useAutosave } from '../hooks/useAutosave';
 import { UserProfile } from '../types';
@@ -30,6 +31,13 @@ export const ProfileEditor: React.FC<Props> = ({ userId }) => {
         clearDraft();
       }
     }
+    // подгружаем сохранённый профиль из облака
+    loadData<UserProfile>('profiles', userId).then(data => {
+      if (data) {
+        localStorage.setItem(`profile_${userId}`, JSON.stringify(data));
+        set(data);
+      }
+    });
   }, []);
 
   useEffect(() => {
@@ -67,6 +75,7 @@ export const ProfileEditor: React.FC<Props> = ({ userId }) => {
   const handlePublish = () => {
     try {
       localStorage.setItem(`profile_${userId}`, JSON.stringify(state));
+      void saveData('profiles', userId, state);
       clearDraft();
       setToast('Профиль опубликован');
     } catch {
@@ -76,13 +85,21 @@ export const ProfileEditor: React.FC<Props> = ({ userId }) => {
 
   const isFieldChanged = (field: keyof UserProfile) => {
     const raw = localStorage.getItem(`profile_${userId}`);
-    if (!raw) return false;
-    try {
-      const savedData: UserProfile = JSON.parse(raw);
-      return savedData[field] !== state[field];
-    } catch {
-      return false;
+    if (raw) {
+      try {
+        const savedData: UserProfile = JSON.parse(raw);
+        return savedData[field] !== state[field];
+      } catch {
+        // ignore
+      }
     }
+    // fall back to cloud without blocking
+    loadData<UserProfile>('profiles', userId).then(d => {
+      if (d) {
+        localStorage.setItem(`profile_${userId}`, JSON.stringify(d));
+      }
+    });
+    return false;
   };
 
   return (

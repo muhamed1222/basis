@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StandardPageLayout } from '../App';
+import StandardPageLayout from '../layouts/StandardPageLayout';
 import { AvatarUploader } from '../components/AvatarUploader';
 import { CoverUploader } from '../components/CoverUploader';
 import { SlugEditor } from '../components/SlugEditor';
