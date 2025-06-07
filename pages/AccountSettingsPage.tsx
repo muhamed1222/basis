@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import StandardPageLayout from '../layouts/StandardPageLayout';
 import useAuth from '../hooks/useAuth';
 import useNotification from '../hooks/useNotification';
+import Spinner from '../ui/Spinner';
 
 interface UserData {
   id: string;
@@ -371,8 +372,10 @@ const AccountSettingsPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={saving.profile}
-                  className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-busy={saving.profile}
+                  className="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-md hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                 >
+                  {saving.profile && <Spinner size="h-4 w-4" className="mr-2" />}
                   {saving.profile ? 'Сохранение...' : 'Сохранить изменения'}
                 </button>
               </div>
@@ -394,7 +397,8 @@ const AccountSettingsPage: React.FC = () => {
                         className="hidden"
                         id="avatar-upload"
                       />
-                      <label htmlFor="avatar-upload" className="cursor-pointer text-sm text-indigo-600 hover:underline">
+                      <label htmlFor="avatar-upload" className="cursor-pointer text-sm text-indigo-600 hover:underline flex items-center">
+                        {saving.avatar && <Spinner size="h-4 w-4" className="mr-1" />}
                         {saving.avatar ? 'Загрузка...' : 'Загрузить новый'}
                       </label>
                     </div>
@@ -455,8 +459,10 @@ const AccountSettingsPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={saving.password}
-                    className="px-4 py-2 bg-orange-500 text-white text-sm font-medium rounded-md hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                    aria-busy={saving.password}
+                    className="px-4 py-2 bg-orange-500 text-white text-sm font-medium rounded-md hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                   >
+                    {saving.password && <Spinner size="h-4 w-4" className="mr-2" />}
                     {saving.password ? 'Изменение...' : 'Изменить пароль'}
                   </button>
                 </div>
@@ -473,8 +479,10 @@ const AccountSettingsPage: React.FC = () => {
               <button
                 onClick={toggle2FA}
                 disabled={saving.twoFactor}
-                className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-busy={saving.twoFactor}
+                className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
+                {saving.twoFactor && <Spinner size="h-4 w-4" className="mr-2" />}
                 {saving.twoFactor ? 'Обновление...' : userData.twoFactorEnabled ? 'Отключить 2FA' : 'Включить 2FA'}
               </button>
             </div>
@@ -556,8 +564,10 @@ const AccountSettingsPage: React.FC = () => {
               <button
                 onClick={generateApiKey}
                 disabled={saving.apiKey}
-                className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-busy={saving.apiKey}
+                className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
+                {saving.apiKey && <Spinner size="h-4 w-4" className="mr-2" />}
                 {saving.apiKey ? 'Генерация...' : 'Сгенерировать API-ключ'}
               </button>
             </div>

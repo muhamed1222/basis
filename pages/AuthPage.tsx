@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import StandardPageLayout from '../layouts/StandardPageLayout';
 import { useAuth } from '../contexts/AuthContext';
+import Spinner from '../ui/Spinner';
 
 type AuthMode = 'login' | 'signup' | 'reset';
 type AuthStatus = 'idle' | 'loading' | 'success' | 'error';
@@ -83,9 +84,10 @@ const AuthPage: React.FC = () => {
         setStatus('success');
         setSuccessMsg('Письмо для восстановления отправлено на почту.');
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Произошла ошибка. Проверьте данные и попробуйте снова.';
       setStatus('error');
-      setErrorMsg(err?.message || 'Произошла ошибка. Проверьте данные и попробуйте снова.');
+      setErrorMsg(message);
     }
   };
 
@@ -230,15 +232,17 @@ const AuthPage: React.FC = () => {
           <button
             type="submit"
             disabled={status === 'loading'}
+            aria-busy={status === 'loading'}
             className={`w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
               mode === 'signup'
                 ? 'bg-green-600 hover:bg-green-700 focus:ring-green-500'
                 : mode === 'reset'
                 ? 'bg-orange-500 hover:bg-orange-600 focus:ring-orange-400'
                 : 'bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500'
-            } focus:outline-none focus:ring-2 focus:ring-offset-2 transition`}
+            } focus:outline-none focus:ring-2 focus:ring-offset-2 transition flex items-center justify-center`}
             data-testid="auth-submit"
           >
+            {status === 'loading' && <Spinner size="h-4 w-4" className="mr-2" />}
             {status === 'loading'
               ? 'Обработка…'
               : mode === 'login'
