@@ -1,28 +1,46 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StandardPageLayout } from '../App';
 import { Link } from 'react-router-dom';
+import { Skeleton } from '../components/Skeleton';
 
 const HomePage: React.FC = () => {
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 500);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <StandardPageLayout title="1. Home (Landing Page)">
       <div className="space-y-10">
-        <section>
-          <h2 className="text-2xl font-semibold font-pragmatica mb-3">
-            Краткое описание платформы
-          </h2>
-          <p className="text-lg text-gray-700">
-            Basis - это инновационная платформа для создания потрясающих
-            персональных страниц и портфолио с использованием интуитивно
-            понятного bento-grid конструктора. Покажите миру свои проекты
-            стильно и эффективно! Создавайте уникальные страницы, которые
-            отражают вашу индивидуальность и профессионализм.
-          </p>
-        </section>
+        {loading ? (
+          <Skeleton className="h-32 w-full" />
+        ) : (
+          <section>
+            <h2 className="text-2xl font-semibold font-pragmatica mb-3">
+              Краткое описание платформы
+            </h2>
+            <p className="text-lg text-gray-700">
+              Basis - это инновационная платформа для создания потрясающих
+              персональных страниц и портфолио с использованием интуитивно
+              понятного bento-grid конструктора. Покажите миру свои проекты
+              стильно и эффективно! Создавайте уникальные страницы, которые
+              отражают вашу индивидуальность и профессионализм.
+            </p>
+          </section>
+        )}
 
         <section>
           <h2 className="text-2xl font-semibold font-pragmatica mb-3">
             Кейсы/примеры страниц пользователей
           </h2>
+          {loading ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <Skeleton className="h-40" />
+              <Skeleton className="h-40" />
+              <Skeleton className="h-40" />
+            </div>
+          ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Example User Page Card */}
             <div className="border rounded-lg p-4 shadow-lg bg-gray-50 hover:shadow-xl transition-shadow">
@@ -76,6 +94,7 @@ const HomePage: React.FC = () => {
               </Link>
             </div>
           </div>
+          )}
         </section>
 
         <section className="text-center py-8 bg-gray-100 rounded-lg">

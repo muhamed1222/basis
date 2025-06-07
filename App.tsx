@@ -1,6 +1,9 @@
 import React from 'react';
 import { Routes, Route, Link, Outlet } from 'react-router-dom';
 import { Header } from './components/Header';
+import { BottomNav } from './components/BottomNav';
+import { ToastProvider } from './components/Toast';
+import { BottomSheet } from './components/BottomSheet';
 
 // Import Page Components
 import HomePage from './pages/HomePage';
@@ -29,12 +32,12 @@ const MainLayout: React.FC = () => {
 
       {/* Max width wrapper with top padding for fixed header */}
       <div className="w-full max-w-[1440px] flex flex-col pt-[60px]">
-        {' '}
         {/* Added padding-top for fixed header */}
         <main className="flex-1 flex flex-col">
           <Outlet /> {/* Child routes will render here */}
         </main>
       </div>
+      <BottomNav />
     </div>
   );
 };
@@ -43,11 +46,13 @@ const MainLayout: React.FC = () => {
 const StandardPageLayout: React.FC<{
   title: string;
   children?: React.ReactNode;
-}> = ({ title, children }) => (
-  <div className="main-content-area">
-    <h1 className="text-3xl font-bold mb-4 font-pragmatica">{title}</h1>
-    {children || <p>Content for {title} will go here.</p>}
-    <div className="mt-8">
+}> = ({ title, children }) => {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div className="main-content-area">
+      <h1 className="text-3xl font-bold mb-4 font-pragmatica">{title}</h1>
+      {children || <p>Content for {title} will go here.</p>}
+      <div className="mt-8">
       <h2 className="text-xl font-semibold mb-2">Quick Navigation:</h2>
       <ul className="list-disc list-inside">
         <li>
@@ -73,12 +78,29 @@ const StandardPageLayout: React.FC<{
         {/* Add more links as needed for testing */}
       </ul>
     </div>
+    <button
+      className="mt-8 px-4 py-2 bg-gray-200 rounded"
+      onClick={() => setOpen(true)}
+    >
+      Сообщить о баге
+    </button>
+    <BottomSheet open={open} onClose={() => setOpen(false)}>
+      <p className="mb-2">Спасибо за отзыв! (скриншот будет здесь)</p>
+      <button
+        className="px-4 py-2 bg-black text-white rounded"
+        onClick={() => setOpen(false)}
+      >
+        Закрыть
+      </button>
+    </BottomSheet>
   </div>
-);
+  );
+};
 
 const App: React.FC = () => {
   return (
-    <Routes>
+    <ToastProvider>
+      <Routes>
       <Route path="/" element={<MainLayout />}>
         <Route index element={<HomePage />} />
         <Route path="auth" element={<AuthPage />} />
@@ -98,6 +120,7 @@ const App: React.FC = () => {
         />
       </Route>
     </Routes>
+    </ToastProvider>
   );
 };
 
