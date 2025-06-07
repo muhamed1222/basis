@@ -8,11 +8,19 @@ import { Toast } from './Toast';
 
 interface Props {
   userId: string;
+  onUnsavedChanges?: (changed: boolean) => void;
+  onSaveSuccess?: () => void;
+  onError?: (err: unknown) => void;
 }
 
 const defaultProfile: UserProfile = { name: '', email: '', bio: '' };
 
-export const ProfileEditor: React.FC<Props> = ({ userId }) => {
+export const ProfileEditor: React.FC<Props> = ({
+  userId,
+  onUnsavedChanges,
+  onSaveSuccess,
+  onError,
+}) => {
   const [toast, setToast] = useState<string | null>(null);
   const { state, set, undo, redo, canUndo, canRedo } =
     useUndoRedo<UserProfile>(defaultProfile);
@@ -21,6 +29,10 @@ export const ProfileEditor: React.FC<Props> = ({ userId }) => {
     'profile',
     state
   );
+
+  useEffect(() => {
+    onUnsavedChanges?.(!saved);
+  }, [saved, onUnsavedChanges]);
 
   useEffect(() => {
     const draft = loadDraft();
@@ -78,8 +90,10 @@ export const ProfileEditor: React.FC<Props> = ({ userId }) => {
       void saveData('profiles', userId, state);
       clearDraft();
       setToast('Профиль опубликован');
-    } catch {
+      onSaveSuccess?.();
+    } catch (err) {
       setToast('Ошибка при сохранении');
+      onError?.(err);
     }
   };
 
