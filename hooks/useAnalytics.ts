@@ -10,10 +10,11 @@ import {
   isIncognito,
   AnalyticsData,
 } from '../services/analytics';
-import { toast } from 'react-toastify';
+import { useToast } from '../components/ToastProvider';
 
 export function useAnalytics() {
   const [data, setData] = useState<AnalyticsData>(() => getAnalytics());
+  const { showSuccess } = useToast();
 
   const refresh = useCallback(() => {
     setData(getAnalytics());
@@ -27,7 +28,7 @@ export function useAnalytics() {
   const click = useCallback(
     (id: string) => {
       recordLinkClick(id);
-      toast.info('Клик по ссылке');
+      showSuccess('Клик по ссылке');
       refresh();
     },
     [refresh],
@@ -36,7 +37,7 @@ export function useAnalytics() {
   const react = useCallback(
     (emoji: string) => {
       recordReaction(emoji);
-      toast.success('Реакция сохранена');
+      showSuccess('Реакция сохранена');
       refresh();
     },
     [refresh],
@@ -45,7 +46,7 @@ export function useAnalytics() {
   const comment = useCallback(
     (text: string) => {
       addComment(text);
-      toast.success('Комментарий добавлен');
+      showSuccess('Комментарий добавлен');
       refresh();
     },
     [refresh],
