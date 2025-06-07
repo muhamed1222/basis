@@ -9,10 +9,17 @@ import OAuth2Server from 'oauth2-server';
 const app = express();
 app.use(express.json());
 
-// Simple in-memory OAuth model
-const users: Record<string, { id: string; password: string }> = {
-  user: { id: 'user', password: 'pass' },
-  test: { id: 'test', password: 'testpass' },
+// Simple in-memory OAuth model and basic user store
+interface UserRecord {
+  id: string;
+  email: string;
+  password: string;
+  role: 'owner' | 'editor';
+}
+
+const users: Record<string, UserRecord> = {
+  user: { id: 'user', email: 'user@example.com', password: 'pass', role: 'owner' },
+  test: { id: 'test', email: 'test@example.com', password: 'testpass', role: 'owner' },
 };
 
 const oauth = new OAuth2Server({
@@ -63,6 +70,19 @@ app.post('/oauth/token', (req, res, next) => {
 // Rate limiting middleware
 const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
 app.use('/api', limiter);
+
+// Basic login endpoint for the frontend
+app.post('/api/login', (req, res) => {
+  const { email, password } = req.body as { email: string; password: string };
+  const record = Object.values(users).find(
+    (u) => u.email === email && u.password === password,
+  );
+  if (!record) {
+    res.status(401).json({ message: 'Invalid credentials' });
+    return;
+  }
+  res.json({ id: record.id, email: record.email, role: record.role });
+});
 
 // Sample REST endpoint
 app.get('/api/profile', (req, res) => {
