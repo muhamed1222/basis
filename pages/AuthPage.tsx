@@ -1,11 +1,14 @@
-import React from 'react';
-import { StandardPageLayout } from '../App';
+
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const AuthPage: React.FC = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const action = queryParams.get('action') || 'login'; // Default to 'login'
+  const { login, signup } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   return (
     <StandardPageLayout title="2. Authentication">
@@ -13,7 +16,13 @@ const AuthPage: React.FC = () => {
         {' '}
         {/* Reduced top margin */}
         {action === 'login' && (
-          <form className="space-y-6 p-6 sm:p-8 border rounded-lg shadow-xl bg-white">
+          <form
+            onSubmit={async e => {
+              e.preventDefault();
+              await login(email, password);
+            }}
+            className="space-y-6 p-6 sm:p-8 border rounded-lg shadow-xl bg-white"
+          >
             <h3 className="text-2xl font-semibold text-center font-pragmatica">
               Вход в Basis
             </h3>
@@ -29,6 +38,8 @@ const AuthPage: React.FC = () => {
                 id="email-login"
                 name="email"
                 required
+                value={email}
+                onChange={e => setEmail(e.target.value)}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="you@example.com"
               />
@@ -45,6 +56,8 @@ const AuthPage: React.FC = () => {
                 id="password-login"
                 name="password"
                 required
+                value={password}
+                onChange={e => setPassword(e.target.value)}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="••••••••"
               />
@@ -102,7 +115,13 @@ const AuthPage: React.FC = () => {
           </form>
         )}
         {action === 'signup' && (
-          <form className="space-y-6 p-6 sm:p-8 border rounded-lg shadow-xl bg-white">
+          <form
+            onSubmit={async e => {
+              e.preventDefault();
+              await signup(email, password);
+            }}
+            className="space-y-6 p-6 sm:p-8 border rounded-lg shadow-xl bg-white"
+          >
             <h3 className="text-2xl font-semibold text-center font-pragmatica">
               Создать аккаунт
             </h3>
@@ -134,6 +153,8 @@ const AuthPage: React.FC = () => {
                 id="email-signup"
                 name="email"
                 required
+                value={email}
+                onChange={e => setEmail(e.target.value)}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="you@example.com"
               />
@@ -150,6 +171,8 @@ const AuthPage: React.FC = () => {
                 id="password-signup"
                 name="password"
                 required
+                value={password}
+                onChange={e => setPassword(e.target.value)}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 placeholder="••••••••"
               />

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StandardPageLayout } from '../App';
+import StandardPageLayout from '../layouts/StandardPageLayout';
 import { useLocation } from 'react-router-dom';
 
 const LegalSection: React.FC<{

@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { StandardPageLayout } from '../App';
+import StandardPageLayout from '../layouts/StandardPageLayout';
 import { Link } from 'react-router-dom';
 import { useAsync } from '../hooks/useAsync';
 import { fetchJson } from '../services/api';
 import { z } from 'zod';
 import { Loader } from '../components/Loader';
+import { Onboarding } from '../components/Onboarding';
 
 const ProjectCardPlaceholder: React.FC<{
   title: string;
@@ -65,6 +66,7 @@ const DashboardPage: React.FC = () => {
 
   return (
     <StandardPageLayout title="3. Dashboard">
+      <Onboarding />
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <div>
@@ -76,6 +78,7 @@ const DashboardPage: React.FC = () => {
             </select>
           </div>
           <Link
+            id="create-project-btn"
             to="/editor"
             state={{ newProject: true }}
             className="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 transition-colors w-full sm:w-auto text-center"
