@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Link, Outlet } from 'react-router-dom';
 import { Header } from './components/Header';
+import { AuthProvider } from './contexts/AuthContext';
 
 // Import Page Components
 import HomePage from './pages/HomePage';
@@ -78,26 +79,28 @@ const StandardPageLayout: React.FC<{
 
 const App: React.FC = () => {
   return (
-    <Routes>
-      <Route path="/" element={<MainLayout />}>
-        <Route index element={<HomePage />} />
-        <Route path="auth" element={<AuthPage />} />
-        <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="editor" element={<EditorPage />} />
-        <Route path="public-profile" element={<PublicProfilePage />} />{' '}
-        {/* This is the existing detailed page */}
-        <Route path="account" element={<AccountSettingsPage />} />
-        <Route path="billing" element={<BillingPage />} />
-        <Route path="analytics" element={<AnalyticsPage />} />
-        <Route path="support" element={<SupportPage />} />
-        <Route path="admin" element={<AdminPage />} />
-        <Route path="legal" element={<LegalPage />} />
-        <Route
-          path="*"
-          element={<StandardPageLayout title="404 - Page Not Found" />}
-        />
-      </Route>
-    </Routes>
+    <AuthProvider>
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="auth" element={<AuthPage />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="editor" element={<EditorPage />} />
+          <Route path="public-profile" element={<PublicProfilePage />} />{' '}
+          {/* This is the existing detailed page */}
+          <Route path="account" element={<AccountSettingsPage />} />
+          <Route path="billing" element={<BillingPage />} />
+          <Route path="analytics" element={<AnalyticsPage />} />
+          <Route path="support" element={<SupportPage />} />
+          <Route path="admin" element={<AdminPage />} />
+          <Route path="legal" element={<LegalPage />} />
+          <Route
+            path="*"
+            element={<StandardPageLayout title="404 - Page Not Found" />}
+          />
+        </Route>
+      </Routes>
+    </AuthProvider>
   );
 };
 
