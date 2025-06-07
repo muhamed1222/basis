@@ -62,6 +62,3 @@ npx eslint .
 npx prettier -w .
 ```
 
-## Работа с API
-
-Для удобного управления состоянием запросов используется [React Query](https://tanstack.com/query). В хуках можно применять `useApiQuery` из `hooks/useApiQuery` для получения данных с автоматическим кешированием и обработкой ошибок.
