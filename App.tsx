@@ -62,7 +62,7 @@ const App: React.FC = () => {
         <Route path="account" element={<AccountSettingsPage />} />
         <Route path="billing" element={<BillingPage />} />
         <Route path="analytics" element={<AnalyticsPage />} />
-        <Route path="support" সড়কের={<SupportPage />} />
+        <Route path="support" element={<SupportPage />} />
         <Route path="admin" element={<AdminPage />} />
         <Route path="legal" element={<LegalPage />} />
         <Route path="*" element={<StandardPageLayout title="404 - Page Not Found" />} />
