@@ -17,8 +17,6 @@ export default defineConfig(({ mode }) => {
       proxy: {
         '/api': 'http://localhost:3001',
         '/oauth': 'http://localhost:3001',
-        '/graphql': 'http://localhost:3001',
-        '/docs': 'http://localhost:3001',
       },
     },
     optimizeDeps: {

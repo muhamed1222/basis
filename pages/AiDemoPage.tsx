@@ -1,6 +1,9 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import StandardPageLayout from '../layouts/StandardPageLayout';
-import { useGenerateProfile } from '../hooks/useGenerateProfile';
+import { generateProfile, GenerateProfileParams } from '../services/ai';
+import { Loader } from '../components/Loader';
+
+import { useCallback } from 'react';
 import { Button } from '../ui/Button';
 import Spinner from '../ui/Spinner';
 import type { GeneratedProfile } from '../services/ai';
@@ -18,7 +21,9 @@ type HistoryItem = {
 };
 
 const AiDemoPage: React.FC = () => {
-  const { loading, data, error, run } = useGenerateProfile();
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<GeneratedProfile | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [input, setInput] = useState<GenerateInput>(initialInput);
   const [history, setHistory] = useState<HistoryItem[]>([]);
 
@@ -29,17 +34,24 @@ const AiDemoPage: React.FC = () => {
     setInput((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleGenerate = useCallback(() => {
+  const handleGenerate = useCallback(async () => {
     if (!input.goals.trim() || !input.description.trim()) return;
-    run({ ...input });
-  }, [input, run]);
 
-  React.useEffect(() => {
-    if (data) {
-      setHistory((prev) => [{ input, result: data }, ...prev]);
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await generateProfile(input as GenerateProfileParams);
+      setData(result);
+      setHistory((prev) => [{ input, result }, ...prev]);
       setInput(initialInput);
+    } catch (e: any) {
+      setError('Ошибка генерации. Проверьте данные и попробуйте ещё раз.');
+      console.error(e);
+    } finally {
+      setLoading(false);
     }
-  }, [data]);
+  }, [input]);
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -97,7 +109,7 @@ const AiDemoPage: React.FC = () => {
               <svg viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
                 <path fillRule="evenodd" d="M18 10A8 8 0 11..." clipRule="evenodd" />
               </svg>
-              <span>Ошибка генерации. Проверьте данные и попробуйте ещё раз.</span>
+              <span>{error}</span>
             </div>
           )}
         </div>
