@@ -2,7 +2,7 @@ import type { RouteObject } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import MainLayout from '../layouts/MainLayout';
 import StandardPageLayout from '../layouts/StandardPageLayout';
-import Loader from '../components/Loader';
+import { Loader } from '../components/Loader';
 
 // Lazy load pages
 const HomePage = lazy(() => import('../pages/HomePage'));
