@@ -206,7 +206,7 @@ const ProfileCustomizationPage: React.FC = () => {
                         {block.text}
                       </a>
                     ) : block.type === 'text' ? (
-                      <div key={i} className="px-3 py-2 text-gray-800 text-left" dangerouslySetInnerHTML={{ __html: block.text }} />
+                      <div key={i} className="px-3 py-2 text-gray-800 text-left">{block.text}</div>
                     ) : block.type === 'divider' ? (
                       <hr key={i} className="border-gray-300 my-2" />
                     ) : null

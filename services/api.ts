@@ -1,136 +1,192 @@
 
 import { z } from 'zod';
 
-const API_BASE = '/api';
+// Схемы валидации
+const profileSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1).max(100),
+  slug: z.string().min(3).max(50).regex(/^[a-zA-Z0-9-_]+$/),
+  bio: z.string().max(500).optional(),
+  avatar: z.string().url().optional(),
+  cover: z.string().url().optional(),
+  theme: z.enum(['light', 'dark', 'auto']).default('light'),
+  layout: z.enum(['default', 'minimal', 'creative']).default('default'),
+  isPublic: z.boolean().default(true),
+  blocks: z.array(z.object({
+    id: z.string(),
+    type: z.enum(['text', 'button', 'divider', 'image', 'video']),
+    content: z.record(z.any()),
+    order: z.number()
+  })).default([])
+});
 
-export class ApiError extends Error {
-  constructor(public status: number, message: string, public data?: any) {
-    super(message);
-    this.name = 'ApiError';
+type Profile = z.infer<typeof profileSchema>;
+
+// Простой кэш с TTL
+class Cache {
+  private cache = new Map<string, { data: any; expires: number }>();
+  private defaultTTL = 5 * 60 * 1000; // 5 минут
+
+  set(key: string, data: any, ttl?: number): void {
+    const expires = Date.now() + (ttl || this.defaultTTL);
+    this.cache.set(key, { data, expires });
+  }
+
+  get(key: string): any | null {
+    const item = this.cache.get(key);
+    if (!item) return null;
+    
+    if (Date.now() > item.expires) {
+      this.cache.delete(key);
+      return null;
+    }
+    
+    return item.data;
+  }
+
+  delete(key: string): void {
+    this.cache.delete(key);
+  }
+
+  clear(): void {
+    this.cache.clear();
   }
 }
 
-async function request<T>(
-  endpoint: string,
-  options: RequestInit = {},
-  schema?: z.ZodType<T>
-): Promise<T> {
-  // Проверяем rate limit
-  if (!checkRateLimit(endpoint)) {
-    throw new ApiError(429, 'Слишком много запросов. Попробуйте позже.');
+class ApiService {
+  private baseUrl = '/api';
+  private cache = new Cache();
+
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {},
+    useCache = true
+  ): Promise<T> {
+    const url = `${this.baseUrl}${endpoint}`;
+    const cacheKey = `${options.method || 'GET'}:${url}`;
+
+    // Проверяем кэш для GET запросов
+    if (useCache && (!options.method || options.method === 'GET')) {
+      const cached = this.cache.get(cacheKey);
+      if (cached) return cached;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 секунд
+
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      // Кэшируем GET запросы
+      if (useCache && (!options.method || options.method === 'GET')) {
+        this.cache.set(cacheKey, data);
+      }
+
+      return data;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error('Превышено время ожидания запроса');
+      }
+      throw error;
+    }
   }
 
-  const url = `${API_BASE}${endpoint}`;
-  
-  const response = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-    ...options,
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new ApiError(response.status, errorData.message || 'API Error', errorData);
+  // Профили
+  async getProfile(slug: string): Promise<Profile> {
+    const data = await this.request<Profile>(`/profiles/${slug}`);
+    return profileSchema.parse(data);
   }
 
-  const data = await response.json();
-  
-  if (schema) {
-    return schema.parse(data);
+  async updateProfile(slug: string, updates: Partial<Profile>): Promise<Profile> {
+    const data = await this.request<Profile>(`/profiles/${slug}`, {
+      method: 'PUT',
+      body: JSON.stringify(updates),
+    }, false);
+
+    // Инвалидируем кэш
+    this.cache.delete(`GET:/api/profiles/${slug}`);
+    
+    return profileSchema.parse(data);
   }
-  
-  return data;
-}
 
-export async function fetchJson<T>(
-  endpoint: string,
-  schema?: z.ZodType<T>,
-  options?: RequestInit
-): Promise<T> {
-  return request(endpoint, options, schema);
-}
+  async createProfile(profile: Omit<Profile, 'id'>): Promise<Profile> {
+    const data = await this.request<Profile>('/profiles', {
+      method: 'POST',
+      body: JSON.stringify(profile),
+    }, false);
 
-export async function postJson<T>(
-  endpoint: string,
-  data: any,
-  schema?: z.ZodType<T>
-): Promise<T> {
-  return request(endpoint, {
-    method: 'POST',
-    body: JSON.stringify(data),
-  }, schema);
-}
-
-export async function putJson<T>(
-  endpoint: string,
-  data: any,
-  schema?: z.ZodType<T>
-): Promise<T> {
-  return request(endpoint, {
-    method: 'PUT',
-    body: JSON.stringify(data),
-  }, schema);
-}
-
-export async function deleteJson<T>(
-  endpoint: string,
-  schema?: z.ZodType<T>
-): Promise<T> {
-  return request(endpoint, {
-    method: 'DELETE',
-  }, schema);
-}
-
-// Простое кэширование
-const cache = new Map<string, { data: any; timestamp: number }>();
-const CACHE_TTL = 5 * 60 * 1000; // 5 минут
-
-// Rate limiting
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT_PER_MINUTE = 60;
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 минута
-
-function checkRateLimit(endpoint: string): boolean {
-  const now = Date.now();
-  const key = endpoint;
-  const existing = rateLimitMap.get(key);
-  
-  if (!existing || now > existing.resetTime) {
-    rateLimitMap.set(key, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
-    return true;
+    return profileSchema.parse(data);
   }
-  
-  if (existing.count >= RATE_LIMIT_PER_MINUTE) {
-    return false;
-  }
-  
-  existing.count += 1;
-  return true;
-}
 
-export async function fetchWithCache<T>(
-  endpoint: string,
-  schema?: z.ZodType<T>
-): Promise<T> {
-  const cached = cache.get(endpoint);
-  const now = Date.now();
-  
-  if (cached && (now - cached.timestamp) < CACHE_TTL) {
-    return cached.data;
-  }
-  
-  const data = await fetchJson(endpoint, schema);
-  cache.set(endpoint, { data, timestamp: now });
-  
-  return data;
-}
+  async deleteProfile(slug: string): Promise<void> {
+    await this.request(`/profiles/${slug}`, {
+      method: 'DELETE',
+    }, false);
 
-export function clearCache(endpoint?: string) {
-  if (endpoint) {
-    cache.delete(endpoint);
-  } else {
-    cache.clear();
+    this.cache.delete(`GET:/api/profiles/${slug}`);
+  }
+
+  // Аналитика
+  async getAnalytics(slug: string, period = '30d'): Promise<any> {
+    return this.request(`/analytics/${slug}?period=${period}`);
+  }
+
+  // Загрузка файлов
+  async uploadFile(file: File, type: 'avatar' | 'cover' | 'image'): Promise<{ url: string }> {
+    // Валидация файла
+    const maxSize = type === 'avatar' ? 2 * 1024 * 1024 : 5 * 1024 * 1024; // 2MB для аватара, 5MB для обложки
+    if (file.size > maxSize) {
+      throw new Error(`Файл слишком большой. Максимум ${maxSize / 1024 / 1024}MB`);
+    }
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      throw new Error('Поддерживаются только JPEG, PNG и WebP');
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
+
+    const response = await fetch(`${this.baseUrl}/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error('Ошибка загрузки файла');
+    }
+
+    return response.json();
+  }
+
+  // Проверка доступности slug
+  async checkSlugAvailability(slug: string): Promise<{ available: boolean }> {
+    return this.request(`/slugs/check?slug=${encodeURIComponent(slug)}`);
+  }
+
+  // Очистка кэша
+  clearCache(): void {
+    this.cache.clear();
   }
 }
+
+export const apiService = new ApiService();
+export type { Profile };
