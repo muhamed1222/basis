@@ -20,17 +20,37 @@ const HomePage: React.FC = () => {
   const [subscribed, setSubscribed] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    Promise.all([
-      fetchCases().catch(() => []),
-      fetchStats().catch(() => null),
-      fetchReviews().catch(() => []),
-    ]).then(([cases, stats, reviews]) => {
-      setCases(cases);
-      setStats(stats);
-      setReviews(reviews);
-      setLoading(false);
-    });
+    let isMounted = true;
+    
+    const loadData = async () => {
+      setLoading(true);
+      
+      try {
+        const [casesResult, statsResult, reviewsResult] = await Promise.allSettled([
+          fetchCases(),
+          fetchStats(),
+          fetchReviews(),
+        ]);
+
+        if (!isMounted) return;
+
+        setCases(casesResult.status === 'fulfilled' ? casesResult.value : []);
+        setStats(statsResult.status === 'fulfilled' ? statsResult.value : null);
+        setReviews(reviewsResult.status === 'fulfilled' ? reviewsResult.value : []);
+      } catch (error) {
+        console.error('Ошибка загрузки данных главной страницы:', error);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleSubscribe = (e: React.FormEvent) => {

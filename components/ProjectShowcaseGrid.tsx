@@ -1,12 +1,14 @@
 import React, { useMemo, useState } from 'react';
 
-interface Project {
+export interface Project {
   id: string;
   title: string;
   description: string;
   image?: string;
   url?: string;
-  tags?: string[];
+  tags: string[];
+  createdAt?: string;
+  featured?: boolean;
 }
 
 interface ProjectShowcaseGridProps {
@@ -53,13 +55,19 @@ export const ProjectShowcaseGrid: React.FC<ProjectShowcaseGridProps> = ({ projec
   const [filter, setFilter] = useState('');
 
   const filteredProjects = useMemo(() => {
-    if (!filter) return projects;
+    if (!filter.trim()) return projects;
 
-    return projects.filter(project => 
-      project.title.toLowerCase().includes(filter.toLowerCase()) ||
-      project.description.toLowerCase().includes(filter.toLowerCase()) ||
-      project.tags?.some(tag => tag.toLowerCase().includes(filter.toLowerCase()))
-    );
+    const searchTerm = filter.toLowerCase().trim();
+    
+    return projects.filter(project => {
+      const titleMatch = project.title.toLowerCase().includes(searchTerm);
+      const descMatch = project.description.toLowerCase().includes(searchTerm);
+      const tagMatch = project.tags.some(tag => 
+        tag.toLowerCase().includes(searchTerm)
+      );
+      
+      return titleMatch || descMatch || tagMatch;
+    });
   }, [projects, filter]);
 
   const allTags = useMemo(() => {

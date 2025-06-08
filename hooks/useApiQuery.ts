@@ -10,12 +10,20 @@ interface UseApiQueryOptions {
   cacheTime?: number;
 }
 
+export interface ApiError {
+  status: number;
+  message: string;
+  data?: unknown;
+}
+
 interface UseApiQueryResult<T> {
   data: T | undefined;
   loading: boolean;
-  error: Error | null;
+  error: ApiError | null;
   refetch: () => Promise<void>;
   invalidate: () => void;
+  isError: boolean;
+  isSuccess: boolean;
 }
 
 export function useApiQuery<T>(
@@ -50,9 +58,15 @@ export function useApiQuery<T>(
     try {
       const result = await fetchWithCache(endpoint, schema);
       setData(result);
+      setError(null);
     } catch (err) {
       if (err instanceof Error && err.name !== 'AbortError') {
-        setError(err);
+        const apiError: ApiError = {
+          status: (err as any).status || 500,
+          message: err.message || 'Неизвестная ошибка',
+          data: (err as any).data
+        };
+        setError(apiError);
       }
     } finally {
       setLoading(false);
@@ -106,5 +120,7 @@ export function useApiQuery<T>(
     error,
     refetch: fetchData,
     invalidate,
+    isError: !!error,
+    isSuccess: !loading && !error && data !== undefined,
   };
 }

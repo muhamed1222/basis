@@ -15,6 +15,11 @@ async function request<T>(
   options: RequestInit = {},
   schema?: z.ZodType<T>
 ): Promise<T> {
+  // Проверяем rate limit
+  if (!checkRateLimit(endpoint)) {
+    throw new ApiError(429, 'Слишком много запросов. Попробуйте позже.');
+  }
+
   const url = `${API_BASE}${endpoint}`;
   
   const response = await fetch(url, {
@@ -81,6 +86,29 @@ export async function deleteJson<T>(
 // Простое кэширование
 const cache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_TTL = 5 * 60 * 1000; // 5 минут
+
+// Rate limiting
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_PER_MINUTE = 60;
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 минута
+
+function checkRateLimit(endpoint: string): boolean {
+  const now = Date.now();
+  const key = endpoint;
+  const existing = rateLimitMap.get(key);
+  
+  if (!existing || now > existing.resetTime) {
+    rateLimitMap.set(key, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+  
+  if (existing.count >= RATE_LIMIT_PER_MINUTE) {
+    return false;
+  }
+  
+  existing.count += 1;
+  return true;
+}
 
 export async function fetchWithCache<T>(
   endpoint: string,
