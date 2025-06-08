@@ -71,3 +71,4 @@ export async function getCurrentUser(): Promise<User | undefined> {
     return undefined;
   }
 }
+// Test accounts removed for security

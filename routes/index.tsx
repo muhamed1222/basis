@@ -1,17 +1,21 @@
+
 import type { RouteObject } from 'react-router-dom';
+import { lazy } from 'react';
 import MainLayout from '../layouts/MainLayout';
 import StandardPageLayout from '../layouts/StandardPageLayout';
-import HomePage from '../pages/HomePage';
-import AuthPage from '../pages/AuthPage';
-import DashboardPage from '../pages/DashboardPage';
-import EditorPage from '../pages/EditorPage';
-import PublicProfilePage from '../pages/PublicProfilePage';
-import AccountSettingsPage from '../pages/AccountSettingsPage';
-import BillingPage from '../pages/BillingPage';
-import AnalyticsPage from '../pages/AnalyticsPage';
-import SupportPage from '../pages/SupportPage';
-import AdminPage from '../pages/AdminPage';
-import LegalPage from '../pages/LegalPage';
+
+// Lazy load pages
+const HomePage = lazy(() => import('../pages/HomePage'));
+const AuthPage = lazy(() => import('../pages/AuthPage'));
+const DashboardPage = lazy(() => import('../pages/DashboardPage'));
+const EditorPage = lazy(() => import('../pages/EditorPage'));
+const PublicProfilePage = lazy(() => import('../pages/PublicProfilePage'));
+const AccountSettingsPage = lazy(() => import('../pages/AccountSettingsPage'));
+const BillingPage = lazy(() => import('../pages/BillingPage'));
+const AnalyticsPage = lazy(() => import('../pages/AnalyticsPage'));
+const SupportPage = lazy(() => import('../pages/SupportPage'));
+const AdminPage = lazy(() => import('../pages/AdminPage'));
+const LegalPage = lazy(() => import('../pages/LegalPage'));
 
 export const routes: RouteObject[] = [
   {

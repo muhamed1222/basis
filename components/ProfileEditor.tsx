@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { saveData, loadData } from '../services/cloud';
-import { useUndoRedo } from '../hooks/useUndoRedo';
-import { useAutosave } from '../hooks/useAutosave';
 import { UserProfile } from '../types';
 import { Button } from '../ui/Button';
 import { Toast } from './Toast';
 
 interface Props {
   userId: string;
-  onUnsavedChanges?: (changed: boolean) => void;
   onSaveSuccess?: () => void;
   onError?: (err: unknown) => void;
 }
@@ -17,151 +13,111 @@ const defaultProfile: UserProfile = { name: '', email: '', bio: '' };
 
 export const ProfileEditor: React.FC<Props> = ({
   userId,
-  onUnsavedChanges,
   onSaveSuccess,
   onError,
 }) => {
+  const [profile, setProfile] = useState<UserProfile>(defaultProfile);
+  const [originalProfile, setOriginalProfile] = useState<UserProfile>(defaultProfile);
   const [toast, setToast] = useState<string | null>(null);
-  const { state, set, undo, redo, canUndo, canRedo } =
-    useUndoRedo<UserProfile>(defaultProfile);
-  const { saved, loadDraft, clearDraft } = useAutosave(
-    userId,
-    'profile',
-    state
-  );
+  const [loading, setLoading] = useState(false);
 
+  // Load profile on mount
   useEffect(() => {
-    onUnsavedChanges?.(!saved);
-  }, [saved, onUnsavedChanges]);
-
-  useEffect(() => {
-    const draft = loadDraft();
-    if (draft) {
-      if (window.confirm('Найден черновик профиля. Восстановить?')) {
-        set(draft);
-      } else {
-        clearDraft();
+    const saved = localStorage.getItem(`profile_${userId}`);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        setProfile(data);
+        setOriginalProfile(data);
+      } catch (err) {
+        console.error('Error loading profile:', err);
       }
     }
-    // подгружаем сохранённый профиль из облака
-    loadData<UserProfile>('profiles', userId).then(data => {
-      if (data) {
-        localStorage.setItem(`profile_${userId}`, JSON.stringify(data));
-        set(data);
-      }
-    });
-  }, []);
+  }, [userId]);
 
+  const hasUnsavedChanges = JSON.stringify(profile) !== JSON.stringify(originalProfile);
+
+  // Warn before leaving with unsaved changes
   useEffect(() => {
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (!saved) {
+      if (hasUnsavedChanges) {
         e.preventDefault();
         e.returnValue = '';
       }
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [saved]);
+  }, [hasUnsavedChanges]);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.key === 'z') {
-        e.preventDefault();
-        if (e.shiftKey) {
-          redo();
-        } else {
-          undo();
-        }
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [undo, redo]);
+  const handleChange = (field: keyof UserProfile) => (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setProfile(prev => ({ ...prev, [field]: e.target.value }));
+  };
 
-  const handleChange =
-    (field: keyof UserProfile) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      set({ ...state, [field]: e.target.value });
-    };
-
-  const handlePublish = () => {
+  const handleSave = async () => {
+    setLoading(true);
     try {
-      localStorage.setItem(`profile_${userId}`, JSON.stringify(state));
-      void saveData('profiles', userId, state);
-      clearDraft();
-      setToast('Профиль опубликован');
+      localStorage.setItem(`profile_${userId}`, JSON.stringify(profile));
+      setOriginalProfile(profile);
+      setToast('Профиль сохранен');
       onSaveSuccess?.();
     } catch (err) {
       setToast('Ошибка при сохранении');
       onError?.(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const isFieldChanged = (field: keyof UserProfile) => {
-    const raw = localStorage.getItem(`profile_${userId}`);
-    if (raw) {
-      try {
-        const savedData: UserProfile = JSON.parse(raw);
-        return savedData[field] !== state[field];
-      } catch {
-        // ignore
-      }
-    }
-    // fall back to cloud without blocking
-    loadData<UserProfile>('profiles', userId).then(d => {
-      if (d) {
-        localStorage.setItem(`profile_${userId}`, JSON.stringify(d));
-      }
-    });
-    return false;
+    return originalProfile[field] !== profile[field];
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
-        <Button onClick={undo} disabled={!canUndo}>
-          Undo
+        <Button onClick={handleSave} disabled={loading || !hasUnsavedChanges}>
+          {loading ? 'Сохранение...' : 'Сохранить'}
         </Button>
-        <Button onClick={redo} disabled={!canRedo}>
-          Redo
-        </Button>
-        <Button onClick={handlePublish}>Сохранить</Button>
         <span className="text-sm text-gray-600">
-          {saved ? 'изменения сохранены' : 'есть несохранённые изменения'}
+          {hasUnsavedChanges ? 'Есть несохраненные изменения' : 'Все изменения сохранены'}
         </span>
       </div>
-      <div className="space-y-2">
-        <label
-          className={`block ${isFieldChanged('name') ? 'bg-yellow-100' : ''}`}
-        >
-          Имя
+
+      <div className="space-y-4">
+        <label className={`block ${isFieldChanged('name') ? 'bg-yellow-50 p-2 rounded' : ''}`}>
+          <span className="block text-sm font-medium text-gray-700 mb-1">Имя</span>
           <input
-            className="border p-2 w-full"
-            value={state.name}
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={profile.name}
             onChange={handleChange('name')}
+            placeholder="Введите ваше имя"
           />
         </label>
-        <label
-          className={`block ${isFieldChanged('email') ? 'bg-yellow-100' : ''}`}
-        >
-          Email
+
+        <label className={`block ${isFieldChanged('email') ? 'bg-yellow-50 p-2 rounded' : ''}`}>
+          <span className="block text-sm font-medium text-gray-700 mb-1">Email</span>
           <input
-            className="border p-2 w-full"
-            value={state.email}
+            type="email"
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={profile.email}
             onChange={handleChange('email')}
+            placeholder="Введите ваш email"
           />
         </label>
-        <label
-          className={`block ${isFieldChanged('bio') ? 'bg-yellow-100' : ''}`}
-        >
-          Биография
+
+        <label className={`block ${isFieldChanged('bio') ? 'bg-yellow-50 p-2 rounded' : ''}`}>
+          <span className="block text-sm font-medium text-gray-700 mb-1">Биография</span>
           <textarea
-            className="border p-2 w-full h-24"
-            value={state.bio}
+            className="w-full p-2 border border-gray-300 rounded-md h-24 resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            value={profile.bio}
             onChange={handleChange('bio')}
+            placeholder="Расскажите о себе"
           />
         </label>
       </div>
+
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   );

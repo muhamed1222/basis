@@ -1,66 +1,43 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Basis Platform</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
-    <!-- Pragmatica Next VF is likely a commercial font. Inter will be the primary fallback. -->
-    <script type="importmap">
-      {
-        "imports": {
-          "react": "https://esm.sh/react@^19.1.0",
-          "react-dom/client": "https://esm.sh/react-dom@^19.1.0/client",
-          "react/jsx-runtime": "https://esm.sh/react@^19.1.0/jsx-runtime",
-          "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
-          "react/": "https://esm.sh/react@^19.1.0/",
-          "react-router-dom": "https://esm.sh/react-router-dom@6"
-        }
-      }
+
+    <!-- SEO Meta Tags -->
+    <title>Basis - Создайте свое портфолио онлайн</title>
+    <meta name="description" content="Создавайте красивые портфолио и личные страницы с помощью Basis. Простой конструктор сайтов для творческих профессионалов." />
+    <meta name="keywords" content="портфолио, конструктор сайтов, личная страница, веб-дизайн" />
+    <meta name="author" content="Basis" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Basis - Создайте свое портфолио онлайн" />
+    <meta property="og:description" content="Создавайте красивые портфолио и личные страницы с помощью Basis" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://basis.dev" />
+    <meta property="og:image" content="/og-image.jpg" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Basis - Создайте свое портфолио онлайн" />
+    <meta name="twitter:description" content="Создавайте красивые портфолио и личные страницы с помощью Basis" />
+    <meta name="twitter:image" content="/og-image.jpg" />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Basis",
+      "url": "https://basis.dev",
+      "description": "Создавайте красивые портфолио и личные страницы",
+      "applicationCategory": "WebApplication",
+      "operatingSystem": "All"
+    }
     </script>
-    <style>
-      body {
-        font-family: 'Inter', sans-serif;
-        background-color: #d2d2d2; /* Outer background from new design */
-      }
-      .font-pragmatica {
-        font-family:
-          'Pragmatica Next VF', 'Inter', sans-serif; /* Specify Pragmatica, fallback to Inter */
-      }
-      /* Custom scrollbar for a cleaner look if desired */
-      ::-webkit-scrollbar {
-        width: 6px;
-        height: 6px;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 3px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #555;
-      }
-      ::-webkit-scrollbar-track {
-        background: #f0f0f0;
-        border-radius: 3px;
-      }
-      .main-content-area {
-        /* Common styling for the white content box */
-        background-color: white;
-        border-radius: 12px;
-        padding: 52px;
-        margin-top: 8px;
-        flex: 1 1 0;
-      }
-    </style>
-    <link rel="stylesheet" href="/index.css" />
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
