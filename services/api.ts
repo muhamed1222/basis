@@ -151,14 +151,34 @@ class ApiService {
   // Загрузка файлов
   async uploadFile(file: File, type: 'avatar' | 'cover' | 'image'): Promise<{ url: string }> {
     // Валидация файла
-    const maxSize = type === 'avatar' ? 2 * 1024 * 1024 : 5 * 1024 * 1024; // 2MB для аватара, 5MB для обложки
+    const maxSize = type === 'avatar' ? 2 * 1024 * 1024 : 5 * 1024 * 1024;
     if (file.size > maxSize) {
       throw new Error(`Файл слишком большой. Максимум ${maxSize / 1024 / 1024}MB`);
     }
 
+    // Проверка MIME типа
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
       throw new Error('Поддерживаются только JPEG, PNG и WebP');
+    }
+
+    // Проверка реального содержимого файла
+    const arrayBuffer = await file.arrayBuffer();
+    const uint8Array = new Uint8Array(arrayBuffer);
+    
+    // Magic numbers для проверки реального типа файла
+    const isJPEG = uint8Array[0] === 0xFF && uint8Array[1] === 0xD8;
+    const isPNG = uint8Array[0] === 0x89 && uint8Array[1] === 0x50 && uint8Array[2] === 0x4E && uint8Array[3] === 0x47;
+    const isWebP = uint8Array[8] === 0x57 && uint8Array[9] === 0x45 && uint8Array[10] === 0x42 && uint8Array[11] === 0x50;
+    
+    if (!isJPEG && !isPNG && !isWebP) {
+      throw new Error('Файл поврежден или не является изображением');
+    }
+
+    // Проверка на вредоносное содержимое
+    const fileContent = new TextDecoder().decode(uint8Array.slice(0, 1024));
+    if (fileContent.includes('<script>') || fileContent.includes('javascript:') || fileContent.includes('<?php')) {
+      throw new Error('Файл содержит потенциально опасный код');
     }
 
     const formData = new FormData();

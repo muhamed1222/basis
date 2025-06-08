@@ -175,8 +175,18 @@ class AuthService {
   private setTokens(token: string, refreshToken: string): void {
     this.token = token;
     this.refreshToken = refreshToken;
-    localStorage.setItem('auth_token', token);
-    localStorage.setItem('refresh_token', refreshToken);
+    
+    // Используем httpOnly cookies через API вместо localStorage
+    document.cookie = `auth_token=${token}; path=/; secure; samesite=strict; httponly`;
+    document.cookie = `refresh_token=${refreshToken}; path=/; secure; samesite=strict; httponly`;
+    
+    // Fallback для совместимости
+    try {
+      sessionStorage.setItem('auth_token', token);
+      sessionStorage.setItem('refresh_token', refreshToken);
+    } catch (e) {
+      console.warn('SessionStorage недоступен');
+    }
   }
 
   private clearTokens(): void {

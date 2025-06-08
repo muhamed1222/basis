@@ -64,20 +64,31 @@ const ProjectShowcaseGrid: React.FC<ProjectShowcaseGridProps> = ({
 
   // Поиск с debounce через useMemo
   const searchedProjects = useMemo(() => {
-    if (!searchTerm.trim()) return sortedProjects;
+    if (!debouncedSearchTerm.trim()) return sortedProjects;
     
-    const term = searchTerm.toLowerCase();
+    const term = debouncedSearchTerm.toLowerCase();
     return sortedProjects.filter(project =>
       project.title.toLowerCase().includes(term) ||
       project.description.toLowerCase().includes(term) ||
       project.tags.some(tag => tag.toLowerCase().includes(term))
     );
-  }, [sortedProjects, searchTerm]);
+  }, [sortedProjects, debouncedSearchTerm]);
 
   const displayedProjects = useMemo(() => 
     searchedProjects.slice(0, limit),
     [searchedProjects, limit]
   );
+
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  
+  // Debounce для поиска
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
