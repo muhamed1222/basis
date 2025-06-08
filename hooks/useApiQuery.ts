@@ -1,9 +1,8 @@
-
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { z } from 'zod';
 import { fetchWithCache, clearCache } from '../services/api';
 
-interface UseApiQueryOptions {
+interface UseApiQueryOptions<TData> {
   enabled?: boolean;
   refetchInterval?: number;
   staleTime?: number;
@@ -16,28 +15,27 @@ export interface ApiError {
   data?: unknown;
 }
 
-interface UseApiQueryResult<T> {
-  data: T | undefined;
+interface UseApiQueryResult<TData, TError> {
+  data: TData | undefined;
   loading: boolean;
-  error: ApiError | null;
+  error: TError | null;
   refetch: () => Promise<void>;
   invalidate: () => void;
   isError: boolean;
   isSuccess: boolean;
 }
 
-export function useApiQuery<T>(
+export const useApiQuery = <TData = unknown, TError = ApiError>(
   endpoint: string,
-  schema?: z.ZodType<T>,
-  options: UseApiQueryOptions = {}
-): UseApiQueryResult<T> {
+  options: UseApiQueryOptions<TData> = {}
+): UseApiQueryResult<TData, TError> => {
   const {
     enabled = true,
     refetchInterval,
     staleTime = 5 * 60 * 1000, // 5 минут
   } = options;
 
-  const [data, setData] = useState<T | undefined>(undefined);
+  const [data, setData] = useState<TData | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -56,7 +54,7 @@ export function useApiQuery<T>(
     setError(null);
 
     try {
-      const result = await fetchWithCache(endpoint, schema);
+      const result = await fetchWithCache(endpoint);
       setData(result);
       setError(null);
     } catch (err) {
@@ -71,7 +69,7 @@ export function useApiQuery<T>(
     } finally {
       setLoading(false);
     }
-  }, [endpoint, schema, enabled]);
+  }, [endpoint, enabled]);
 
   const invalidate = useCallback(() => {
     clearCache(endpoint);

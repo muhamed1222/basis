@@ -1,4 +1,3 @@
-
 interface ErrorInfo {
   message: string;
   stack?: string;
@@ -84,3 +83,18 @@ window.addEventListener('unhandledrejection', (event) => {
 });
 
 export default ErrorReporter;
+
+export const handleApiError = (error: unknown): ApiError => {
+  // Строгая типизация ошибок
+  if (error instanceof TypeError) {
+    return {
+      status: 0,
+      message: 'Проблемы с сетью',
+      data: null
+    };
+  }
+
+  if (error && typeof error === 'object' && 'status' in error) {
+    return error as ApiError;
+  }
+}
