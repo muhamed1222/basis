@@ -84,6 +84,12 @@ window.addEventListener('unhandledrejection', (event) => {
 
 export default ErrorReporter;
 
+export interface ApiError {
+  status: number;
+  message: string;
+  data?: unknown;
+}
+
 export const handleApiError = (error: unknown): ApiError => {
   // Строгая типизация ошибок
   if (error instanceof TypeError) {
@@ -97,4 +103,11 @@ export const handleApiError = (error: unknown): ApiError => {
   if (error && typeof error === 'object' && 'status' in error) {
     return error as ApiError;
   }
-}
+
+  // Fallback для неизвестных ошибок
+  return {
+    status: 500,
+    message: error instanceof Error ? error.message : 'Неизвестная ошибка',
+    data: null
+  };
+};

@@ -9,10 +9,15 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "eslint . --ext .ts,.tsx --fix",
     "format": "prettier -w .",
+    "type-check": "tsc --noEmit",
     "server": "ts-node server/index.ts",
     "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
+    "analyze": "ANALYZE=true npm run build",
+    "build:prod": "npm run type-check && npm run lint && npm run test && npm run build",
     "postinstall": "npm rebuild rollup"
   },
   "dependencies": {

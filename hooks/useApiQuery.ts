@@ -15,6 +15,12 @@ export interface ApiError {
   data?: unknown;
 }
 
+export interface ApiError {
+  status: number;
+  message: string;
+  data?: unknown;
+}
+
 interface UseApiQueryResult<TData, TError> {
   data: TData | undefined;
   loading: boolean;
