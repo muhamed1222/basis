@@ -47,26 +47,6 @@ class PerformanceMonitor {
 
     // В продакшене отправлять на сервер
     if (process.env.NODE_ENV === 'production') {
-      // sendMetricToServer(name, value);
-    }
-  }
-
-  getMetrics(): PerformanceMetric[] {
-    return [...this.metrics];
-  }
-
-  clearErrors(): void {
-    this.metrics = [];
-  }
-}
-
-interface PerformanceMetric {
-  name: string;
-  value: number;
-  timestamp: number;
-}
-
-export const performanceMonitor = PerformanceMonitor.getInstance();on') {
       this.sendToAnalytics(name, value);
     }
   }

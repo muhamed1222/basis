@@ -52,6 +52,7 @@ const ProfileCustomizationPage: React.FC = () => {
     setProfile((p) => ({ ...p, blocks: p.blocks.filter((_, i) => i !== index) }));
   };
 
+  const updateBlock = (index: number, props: Partial<{ text: string; url: string; style: string }>) => {
     setProfile((p) => ({
       ...p,
       blocks: p.blocks.map((b, i) => (i === index ? { ...b, ...props } : b)),
@@ -222,7 +223,9 @@ const ProfileCustomizationPage: React.FC = () => {
           </div>
         </main>
       </div>
-      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
+      {toast && (
+        <Toast message={toast} onClose={() => setToast(null)} />
+      )}
     </StandardPageLayout>
   );
 };
