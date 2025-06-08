@@ -162,7 +162,7 @@ const ProjectShowcaseGrid: React.FC<ProjectShowcaseGridProps> = ({
       )}
     </div>
   );
-});
+);
 
 ProjectShowcaseGrid.displayName = 'ProjectShowcaseGrid';
 

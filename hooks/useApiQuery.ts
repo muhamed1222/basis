@@ -15,12 +15,6 @@ export interface ApiError {
   data?: unknown;
 }
 
-export interface ApiError {
-  status: number;
-  message: string;
-  data?: unknown;
-}
-
 interface UseApiQueryResult<TData, TError> {
   data: TData | undefined;
   loading: boolean;
@@ -43,7 +37,7 @@ export const useApiQuery = <TData = unknown, TError = ApiError>(
 
   const [data, setData] = useState<TData | undefined>(undefined);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<TError | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -65,11 +59,11 @@ export const useApiQuery = <TData = unknown, TError = ApiError>(
       setError(null);
     } catch (err) {
       if (err instanceof Error && err.name !== 'AbortError') {
-        const apiError: ApiError = {
+        const apiError = {
           status: (err as any).status || 500,
           message: err.message || 'Неизвестная ошибка',
           data: (err as any).data
-        };
+        } as TError;
         setError(apiError);
       }
     } finally {

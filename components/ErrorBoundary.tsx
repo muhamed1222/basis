@@ -41,6 +41,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
     // В продакшене отправлять на сервер логирования
     if (process.env.NODE_ENV === 'production') {
       // sendErrorToLogging(error, errorInfo);
+    }orInfo);
     }
   }
 
