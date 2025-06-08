@@ -61,6 +61,8 @@ const ProjectShowcaseGrid: React.FC<ProjectShowcaseGridProps> = ({
   const filteredProjects = useFilteredProjects(projects || [], category, featured);
   const sortedProjects = useSortedProjects(filteredProjects);
 
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+
   // Поиск с debounce через useMemo
   const searchedProjects = useMemo(() => {
     if (!debouncedSearchTerm.trim()) return sortedProjects;
@@ -78,12 +80,10 @@ const ProjectShowcaseGrid: React.FC<ProjectShowcaseGridProps> = ({
     });
   }, [sortedProjects, debouncedSearchTerm]);
 
-  const displayedProjects = useMemo(() => 
-    searchedProjects.slice(0, limit),
+  const displayedProjects = useMemo(
+    () => searchedProjects.slice(0, limit),
     [searchedProjects, limit]
   );
-
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   // Debounce для поиска
   useEffect(() => {
@@ -162,7 +162,7 @@ const ProjectShowcaseGrid: React.FC<ProjectShowcaseGridProps> = ({
       )}
     </div>
   );
-);
+};
 
 ProjectShowcaseGrid.displayName = 'ProjectShowcaseGrid';
 
