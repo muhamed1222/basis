@@ -67,11 +67,16 @@ const ProjectShowcaseGrid: React.FC<ProjectShowcaseGridProps> = ({
     if (!debouncedSearchTerm.trim()) return sortedProjects;
     
     const term = debouncedSearchTerm.toLowerCase();
-    return sortedProjects.filter(project =>
-      project.title.toLowerCase().includes(term) ||
-      project.description.toLowerCase().includes(term) ||
-      project.tags.some(tag => tag.toLowerCase().includes(term))
-    );
+    return sortedProjects.filter(project => {
+      // Защита от null/undefined
+      const title = project.title?.toLowerCase() || '';
+      const description = project.description?.toLowerCase() || '';
+      const tags = project.tags || [];
+      
+      return title.includes(term) ||
+             description.includes(term) ||
+             tags.some(tag => tag?.toLowerCase?.().includes(term));
+    });
   }, [sortedProjects, debouncedSearchTerm]);
 
   const displayedProjects = useMemo(() => 

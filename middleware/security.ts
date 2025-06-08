@@ -10,10 +10,23 @@ class RateLimit {
   private store: RateLimitStore = {};
   private readonly maxRequests: number;
   private readonly windowMs: number;
+  private cleanupInterval: NodeJS.Timeout;
 
   constructor(maxRequests = 100, windowMs = 15 * 60 * 1000) {
     this.maxRequests = maxRequests;
     this.windowMs = windowMs;
+    
+    // Автоматическая очистка каждые 5 минут
+    this.cleanupInterval = setInterval(() => {
+      this.cleanup();
+    }, 5 * 60 * 1000);
+  }
+
+  destroy(): void {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+    }
+    this.store = {};
   }
 
   check(identifier: string): boolean {

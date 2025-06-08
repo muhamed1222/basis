@@ -45,9 +45,17 @@ const LazyImage: React.FC<LazyImageProps> = ({
     setHasError(false);
   };
 
-  const handleError = () => {
+  const handleError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    console.error('Ошибка загрузки изображения:', src, event);
     setHasError(true);
     setIsLoaded(false);
+    
+    // Попытка загрузить fallback изображение
+    const img = event.currentTarget;
+    if (img.src !== placeholder && placeholder !== src) {
+      img.src = placeholder;
+      setHasError(false);
+    }
   };
 
   return (

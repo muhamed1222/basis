@@ -74,12 +74,30 @@ class ApiService {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 секунд
 
+    // Получаем CSRF токен для небезопасных методов
+    let csrfToken = '';
+    if (options.method && !['GET', 'HEAD', 'OPTIONS'].includes(options.method)) {
+      try {
+        const csrfResponse = await fetch('/api/csrf-token', {
+          credentials: 'include'
+        });
+        if (csrfResponse.ok) {
+          const csrfData = await csrfResponse.json();
+          csrfToken = csrfData.token;
+        }
+      } catch (error) {
+        console.warn('Не удалось получить CSRF токен:', error);
+      }
+    }
+
     try {
       const response = await fetch(url, {
         ...options,
         signal: controller.signal,
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
+          ...(csrfToken && { 'X-CSRF-Token': csrfToken }),
           ...options.headers,
         },
       });
@@ -175,10 +193,38 @@ class ApiService {
       throw new Error('Файл поврежден или не является изображением');
     }
 
-    // Проверка на вредоносное содержимое
-    const fileContent = new TextDecoder().decode(uint8Array.slice(0, 1024));
-    if (fileContent.includes('<script>') || fileContent.includes('javascript:') || fileContent.includes('<?php')) {
-      throw new Error('Файл содержит потенциально опасный код');
+    // Расширенная проверка на вредоносное содержимое
+    const fileContent = new TextDecoder('utf-8', { fatal: false }).decode(uint8Array.slice(0, 2048));
+    const dangerousPatterns = [
+      /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+      /javascript:/gi,
+      /data:text\/html/gi,
+      /vbscript:/gi,
+      /<iframe/gi,
+      /<embed/gi,
+      /<object/gi,
+      /<link.*rel.*stylesheet/gi,
+      /<?php/gi,
+      /<%.*%>/gi,
+      /\bon\w+\s*=/gi // события onclick, onload и т.д.
+    ];
+    
+    for (const pattern of dangerousPatterns) {
+      if (pattern.test(fileContent)) {
+        throw new Error('Файл содержит потенциально опасный код');
+      }
+    }
+
+    // Дополнительная проверка EXIF данных для изображений
+    if (isJPEG) {
+      const exifStart = uint8Array.indexOf(0xFF, 2);
+      if (exifStart > 0) {
+        const exifData = uint8Array.slice(exifStart, exifStart + 1024);
+        const exifString = new TextDecoder('utf-8', { fatal: false }).decode(exifData);
+        if (dangerousPatterns.some(pattern => pattern.test(exifString))) {
+          throw new Error('EXIF данные содержат опасный код');
+        }
+      }
     }
 
     const formData = new FormData();

@@ -37,8 +37,31 @@ class AuthService {
   private refreshToken: string | null = null;
 
   constructor() {
-    this.token = localStorage.getItem('auth_token');
-    this.refreshToken = localStorage.getItem('refresh_token');
+    this.initializeTokens();
+  }
+
+  private async initializeTokens(): Promise<void> {
+    try {
+      // Пытаемся получить токены из httpOnly cookies через API
+      const response = await fetch('/api/auth/verify', {
+        credentials: 'include'
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        this.token = data.token;
+        this.refreshToken = data.refreshToken;
+      } else {
+        // Fallback к sessionStorage
+        this.token = sessionStorage.getItem('auth_token');
+        this.refreshToken = sessionStorage.getItem('refresh_token');
+      }
+    } catch (error) {
+      console.warn('Ошибка инициализации токенов:', error);
+      // Fallback к sessionStorage
+      this.token = sessionStorage.getItem('auth_token');
+      this.refreshToken = sessionStorage.getItem('refresh_token');
+    }
   }
 
   async login(email: string, password: string): Promise<AuthResponse> {
@@ -172,20 +195,29 @@ class AuthService {
     return response;
   }
 
-  private setTokens(token: string, refreshToken: string): void {
+  private async setTokens(token: string, refreshToken: string): Promise<void> {
     this.token = token;
     this.refreshToken = refreshToken;
     
-    // Используем httpOnly cookies через API вместо localStorage
-    document.cookie = `auth_token=${token}; path=/; secure; samesite=strict; httponly`;
-    document.cookie = `refresh_token=${refreshToken}; path=/; secure; samesite=strict; httponly`;
-    
-    // Fallback для совместимости
+    // Отправляем токены на сервер для установки httpOnly cookies
     try {
-      sessionStorage.setItem('auth_token', token);
-      sessionStorage.setItem('refresh_token', refreshToken);
-    } catch (e) {
-      console.warn('SessionStorage недоступен');
+      await fetch('/api/auth/set-cookies', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token, refreshToken }),
+        credentials: 'include'
+      });
+    } catch (error) {
+      console.error('Ошибка установки cookies:', error);
+      // Fallback для совместимости
+      try {
+        sessionStorage.setItem('auth_token', token);
+        sessionStorage.setItem('refresh_token', refreshToken);
+      } catch (e) {
+        console.warn('SessionStorage недоступен');
+      }
     }
   }
 
@@ -197,7 +229,28 @@ class AuthService {
   }
 
   isAuthenticated(): boolean {
-    return !!this.token;
+    if (!this.token) return false;
+    
+    try {
+      // Простая проверка структуры JWT без верификации подписи
+      const parts = this.token.split('.');
+      if (parts.length !== 3) return false;
+      
+      const payload = JSON.parse(atob(parts[1]));
+      const now = Math.floor(Date.now() / 1000);
+      
+      // Проверяем срок действия
+      if (payload.exp && payload.exp < now) {
+        this.clearTokens();
+        return false;
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Ошибка валидации токена:', error);
+      this.clearTokens();
+      return false;
+    }
   }
 
   getToken(): string | null {
